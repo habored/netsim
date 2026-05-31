@@ -18,10 +18,12 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build project
-        run: npm run build
+        run: |
+            npm run build
+            ls -R
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
