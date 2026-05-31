@@ -1,0 +1,79 @@
+{
+  "code": "01",
+  "title": "Découverte du réseau local",
+
+  "objectif": "Observez les adresses IP des machines et utilisez la commande ping depuis le PC1 pour vérifier la communication dans le réseau local.",
+
+  "hints": [
+    "Chaque machine possède une adresse IP : c'est son numéro unique sur le réseau",
+    "Toutes les machines d'un même réseau local sont reliées au switch",
+    "Testez la communication avec la commande ping suivi de l'adresse IP de la machine à joindre",
+    "Passez en mode simulation pour suivre pas à pas le déroulé du ping"
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC1",
+      "ip": "192.168.1.10",
+      "mask": "255.255.255.0",
+      "gateway": "",
+      "x": 80,
+      "y": 60,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "host",
+      "name": "PC2",
+      "ip": "192.168.1.20",
+      "mask": "255.255.255.0",
+      "gateway": "",
+      "x": 300,
+      "y": 60,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "host",
+      "name": "PC3",
+      "ip": "192.168.1.30",
+      "mask": "255.255.255.0",
+      "gateway": "",
+      "x": 520,
+      "y": 60,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-A",
+      "ports": 4,
+      "x": 300,
+      "y": 220,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    }
+  ],
+
+  "links": [
+    { "link": ["PC1", 0, "Switch-A", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["PC2", 0, "Switch-A", 1], "editable": false, "type": "Ethernet" },
+    { "link": ["PC3", 0, "Switch-A", 2], "editable": false, "type": "Ethernet" }
+  ],
+
+  "pingsToValidate": [
+    {
+      "sourceDevice": "PC1",
+      "targetDevice": "PC2",
+      "flag": "PING_OK"
+    }
+  ]
+}

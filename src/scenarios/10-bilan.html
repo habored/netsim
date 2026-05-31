@@ -1,0 +1,23 @@
+<p>Dans ce scénario, vous avez découvert le protocole <strong>OSPF</strong>.</p>
+
+<h3>📖✏️ À retenir</h3>
+
+<ul>
+  <li><strong>OSPF</strong> est un protocole de routage dynamique qui utilise une métrique basée sur la <strong>bande passante des liens</strong>.</li>
+  <li>Les routeurs <strong>OSPF</strong> échangent des informations pour construire une <strong>carte complète du réseau</strong> et calculer les <strong>chemins les plus rapides</strong>.</li>
+  <li><strong>OSPF</strong> utilise l’algorithme de <strong>Dijkstra</strong> pour déterminer le <strong>meilleur chemin</strong> vers une destination.</li>
+  <li>Chaque routeur possède une <strong>table de routage</strong> mise à jour automatiquement lorsque le réseau change.</li>
+  <li><strong>OSPF</strong> permet une <strong>convergence rapide</strong> en cas de panne ou de modification d’un lien.</li>
+</ul>
+
+<h3>🔍 Ce que vous avez observé</h3>
+
+<ul>
+  <li>Les routeurs échangent des <strong>informations de routage</strong> avec leurs voisins.</li>
+  <li>Lorsqu'un routeur utilise OSPF, il met à jour sa <strong>table de routage</strong> de manière dynamique (i.e., sans intervention manuelle).</li>
+  <li>Dans la table de routage, un ligne remplie grâce à OSPF possède une <strong>colonne indiquant le coût</strong></li>
+  <li>La colonne coût correspondant à la <strong>rapidité du chemin</strong> : c'est la <strong>métrique</strong> utilisée par OSFP.</li>
+  <li>Le <strong>coût d'une liaison</strong> est <strong>inversement proportionnel au débit</strong> de cette liaison .</li>
+  <li>Le <strong>coût d'un chemin</strong> est la <strong>somme</strong> des coûts des liaisons qui composent ce chemin.</li>
+  <li>Si plusieurs chemins sont disponibles pour une même destination, le chemin possédant le <strong>plus faible coût</strong>, c'est-à-dire le meilleur débit, sera privilégié.</li>
+</ul>

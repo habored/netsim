@@ -1,0 +1,78 @@
+<h3>🔍 Ce que vous avez observé</h3>
+
+<p>
+Dans ce scénario, Alice était connectée à un réseau local, mais le serveur se trouvait sur un autre réseau.
+Malgré une connexion physique via plusieurs équipements, la communication ne fonctionnait pas immédiatement.
+</p>
+
+<ul>
+  <li>Le PC d’Alice était dans un réseau local, d'adresse réseau <code>192.168.1.0/24</code>.</li>
+  <li>Le serveur était dans un autre réseau local, d'adresse réseau <code>10.0.0.0/24</code>.</li>
+  <li>Il faut donc utiliser le <strong>routeur</strong> pour établir la communication.</li>
+  <li>Les passerelles des machines étaient déjà configurées et non modifiables</li>
+  <li>La <strong>passerelle du PC d'Alice</strong> était correcte : <code>192.168.1.1</code> appartient bien au réseau <code>192.168.1.0/24</code></li>
+  <li>La <strong>passerelle du serveur</strong> était correcte : <code>10.0.0.1</code> appartient bien au réseau <code>10.0.0.0/24</code></li>
+  <li>Le routeur possédait <strong>deux interfaces à configurer</strong></li>
+  <li>Pour qu'un ping réussisse, il faut que les routes aller et retour soient correctement configurées entre les réseaux.</li>
+</ul>
+
+<h3>🏁 Ce que vous avez accompli</h3>
+
+<ul>
+  <li>Vous avez configuré les interfaces du routeur avec des adresses IP valides sur chaque réseau.</li>
+
+  <li>Vous avez utilisé comme interface du routeur la passerelle utilisée par le PC d’Alice : ainsi, le PC d'Alice peut communiquer avec l'extérieur via le routeur</li>
+  <li>Vous avez utilisé comme interface du routeur la passerelle utilisée par le serveur : ainsi, le serveur peut communiquer avec l'extérieur de son réseau via le routeur</li>
+  <li>Vous avez réussi à établir le chemin complet jusqu’au serveur et récupérer le flag.</li>
+
+</ul>
+
+<h3>📖✏️ À retenir : Le rôle du routeur</h3>
+
+<ul>
+  <li>
+    Un <strong>routeur</strong> permet de connecter plusieurs réseaux IP différents entre eux.
+  </li>
+
+  <li>
+    Chaque interface du routeur appartient à un <strong>réseau distinct</strong>
+    (ex : <code>192.168.1.1</code> et <code>10.0.0.1</code>).
+  </li>
+
+  <li>
+    Pour sortir de son réseau local, un ordinateur utilise sa
+    <strong>passerelle par défaut (gateway)</strong>.
+  </li>
+
+  <li>
+    La gateway est généralement l’adresse du routeur dans le réseau local.
+  </li>
+
+  <li>
+    Le routeur transfère les paquets entre réseaux en fonction de l’adresse IP de destination.
+  </li>
+
+  <li>
+    Un switch ne suffit pas pour relier deux réseaux différents :
+    seul un routeur permet cette <strong>interconnexion</strong>.
+  </li>
+
+  <li>
+    Sans configuration correcte des interfaces et des routes,
+    les réseaux restent isolés même s’ils sont physiquement connectés.
+  </li>
+</ul>
+
+<h3>🚀 Dans le prochain scénario...</h3>
+
+<p>
+Vous allez découvrir un réseau plus complexe avec plusieurs chemins possibles.
+</p>
+
+<p>
+Le routeur devra choisir la bonne route entre plusieurs réseaux interconnectés.
+</p>
+
+<p>
+Vous apprendrez à comprendre et analyser les chemins de routage (routing logique).
+</p>

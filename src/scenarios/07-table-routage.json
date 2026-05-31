@@ -1,0 +1,154 @@
+{
+  "code": "07",
+
+  "title": "La table de routage",
+
+  "objectif": "Le PC1 ne sait pas comment atteindre le serveur situé sur un réseau distant. Configurez la route manquante dans la table de routage pour que le paquet puisse être envoyé, et la réponse reçue...",
+
+  "hints": [
+    "La route PC1 <-> serveur doit fonctionner dans les deux sens",
+    "Un routeur doit connaître les réseaux distants",
+    "La table de routage indique au routeur quelle interface utiliser pour transmettre les paquets",
+    "Sélectionnez attentivement les interfaces de sortie pour chaque route",
+    "Le next-hop contient l'adresse IP du routeur suivant, au bout de l'interface indiquée",
+    "Pinguez le serveur depuis le PC et observer se qu'il se passe en mode simulation",
+    "Observez la table de routage des routeurs R1 et R2 pour comprendre comment compléter la configuration"
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC1",
+      "ip": "192.168.1.10",
+      "mask": "255.255.255.0",
+      "gateway": "192.168.1.254",
+      "x": 40,
+      "y": 120,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-LAN-A",
+      "ports": 2,
+      "x": 180,
+      "y": 20,
+      "editable": false
+    },
+
+    {
+      "type": "router",
+      "name": "R1",
+      "interfaces": [
+        {
+          "name": "eth0",
+          "ip": "192.168.1.254",
+          "mask": "255.255.255.0",
+          "editable": false
+        },
+
+        {
+          "name": "eth1",
+          "ip": "10.0.0.1",
+          "mask": "255.255.255.0",
+          "editable": false
+        }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["static"] , "editable": false},
+        "table": {
+          "rows": [
+            { "protocol": "static", "destinationNetworkIp": "172.16.0.0", "networkMask": "255.255.255.0", "nextHop": "10.0.0.2", "outInterface": "eth1", "cost": "" }
+          ],
+        "editable": true
+        }
+      },
+      "x": 420,
+      "y": 120,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "router",
+      "name": "R2",
+
+      "interfaces": [
+        {
+          "name": "eth0",
+          "ip": "10.0.0.2",
+          "mask": "255.255.255.0",
+          "editable": false
+        },
+
+        {
+          "name": "eth1",
+          "ip": "172.16.0.254",
+          "mask": "255.255.255.0",
+          "editable": false
+        }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["static"] , "editable": false},
+        "table": {
+          "rows": [
+           
+          ],
+        "editable": true
+        }
+      },
+      "x": 700,
+      "y": 120,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-LAN-B",
+      "ports": 2,
+      "x": 900,
+      "y": 20,
+      "editable": false
+    },
+
+    {
+      "type": "server",
+      "name": "Serveur",
+      "ip": "172.16.0.10",
+      "mask": "255.255.255.0",
+      "gateway": "172.16.0.254",
+      "x": 1100,
+      "y": 120,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": true
+    }
+  ],
+
+  "links": [
+    { "link": ["PC1", 0, "Switch-LAN-A", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch-LAN-A", 1, "R1", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R1", 1, "R2", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R2", 1, "Switch-LAN-B", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch-LAN-B", 1, "Serveur", 0], "editable": false, "type": "Ethernet" }
+  ],
+
+  "routesToValidate": [
+    {
+      "router": "R1",
+
+      "destination": "172.16.0.0",
+      "mask": "255.255.255.0",
+      "gateway": "10.0.0.2"
+    }
+  ],
+
+  "pingsToValidate": [
+    {
+      "sourceDevice": "PC1",
+      "targetDevice": "Serveur",
+      "flag": "ROUTE_FOUND"
+    }
+  ]
+}

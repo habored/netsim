@@ -1,0 +1,79 @@
+{
+  "code": "02",
+  "title": "Adresses spéciales",
+  "objectif": "Corrigez les mauvaises configurations réseau afin que toutes les machines puissent communiquer sur le réseau 192.168.1.0 avec le masque 255.255.255.0. .",
+  "hints": [
+    "Deux adresses IP spéciales ne peuvent pas être attribuées à un hote. On dit que l'adresse n'est pas attribuable",
+    "L'adresse 192.168.1.0 n'est pas attribuable car c'est l'adresse spéciale du réseau",
+    "L'adresse 192.168.1.255 n'est pas attribuable car c'est l'adresse de broadcast du réseau",
+    "Les masques sont peut-être incorrects",
+    "Vérifiez la cohérence globale",
+    "Il y a 3 flags à obtenir : notez-les bien et concaténez-les pour reconstituer le flag final",
+    "Obtenez chaque flag en pinguant les machines dans cet ordre :  Bob -> Alice,  Bob -> PC 192 puis Alice ->  PC prof"
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC de Bob",
+      "ip": "192.168.1.0",
+      "mask": "255.255.255.0",
+      "gateway": "",
+      "x": 50,
+      "y": 20,
+      "editable": true
+    },
+    {
+      "type": "host",
+      "name": "PC d'Alice",
+      "ip": "192.168.1.1",
+      "mask": "255.255.255.0",
+      "gateway": "",
+      "x": 300,
+      "y": 20,
+      "editable": true
+    },
+
+    {
+      "type": "host",
+      "name": "PC prof",
+      "ip": "192.168.2.255",
+      "mask": "255.255.0.0",
+      "gateway": "",
+      "x": 600,
+      "y": 20,
+      "editable": true
+    },
+
+    {
+      "type": "host",
+      "name": "PC 192",
+      "ip": "255.255.1.192",
+      "mask": "255.255.1.0",
+      "gateway": "",
+      "x": 20,
+      "y": 200,
+      "editable": true
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-A",
+      "ports": 4,
+      "x": 300,
+      "y": 200
+    }
+  ],
+
+  "links": [
+    { "link": ["PC de Bob", 0, "Switch-A", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["PC d'Alice", 0, "Switch-A", 1], "editable": false, "type": "Ethernet" },
+    { "link": ["PC prof", 0, "Switch-A", 2], "editable": false, "type": "Ethernet" },
+    { "link": ["PC 192", 0, "Switch-A", 3], "editable": false, "type": "Ethernet" }
+  ],
+  "pingsToValidate": [
+    { "sourceDevice": "PC de Bob", "targetDevice": "PC d'Alice", "flag": "2MPC/1LAN" },
+    { "sourceDevice": "PC de Bob", "targetDevice": "PC 192", "flag": "<=>IPvalide" },
+    { "sourceDevice": "PC d'Alice", "targetDevice": "PC prof", "flag": "&mêmeMask" }
+  ]
+}

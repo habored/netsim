@@ -1,0 +1,43 @@
+<h3>Comprendre le NAT (Network Address Translation)</h3>
+
+<p>Félicitations ! Vous venez de configurer un <strong>routeur de bordure</strong>. C'est exactement ce que fait votre "Box" internet à la maison pour permettre à tous vos appareils de partager une seule connexion.</p>
+
+<h4>La situation initiale : L'impasse du retour</h4>
+
+<p>Sans NAT, la communication est asymétrique :</p>
+<ul>
+    <li>Le <strong>PC 1</strong> (192.168.1.10) envoie sa requête. Le paquet traverse R1 et arrive bien au <strong>Web Server</strong>.</li>
+    <li>Le serveur reçoit le message et voit l'adresse de l'expéditeur : <code>192.168.1.10</code>.</li>
+    <li>Le serveur tente de répondre, mais le routeur <strong>R-Internet</strong> ne connaît pas le chemin vers <code>192.168.1.0</code> car c'est un réseau privé (non routable sur Internet).</li>
+    <li>Le paquet retour est perdu : "Destination Unreachable".</li>
+</ul>
+
+<h4>La solution : Le masquage d'adresse (SNAT)</h4>
+<p>En configurant la règle NAT sur <strong>R1</strong>, vous avez créé un traducteur :</p>
+<ul>
+    <li><strong>À la sortie :</strong> R1 intercepte le paquet du PC. Il remplace l'adresse source privée (<code>192.168.1.10</code>) par son adresse publique (<code>203.0.113.1</code>).</li>
+    <li><strong>À l'entrée :</strong> Le routeur Internet voit un paquet venant de <code>203.0.113.1</code>. Il sait répondre à cette adresse car elle appartient au réseau public.</li>
+</ul>
+
+<h4>La Table de Translation (NAT Table)</h4>
+
+<p>R1 mémorise la transaction pour savoir à qui rendre le paquet quand la réponse arrive :</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>IP Source Interne</th>
+            <th>IP Publique (Masque)</th>
+            <th>Destination</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>192.168.1.10</td>
+            <td><strong>203.0.113.1</strong></td>
+            <td>8.8.8.8</td>
+        </tr>
+    </tbody>
+</table>
+
+<p class="muted" style="margin-top: 20px;"><strong>Note pédagogique :</strong> C'est grâce à cette technique que nous ne manquons pas d'adresses IPv4. Des millions de réseaux privés "se cachent" derrière quelques millions d'adresses publiques.</p>

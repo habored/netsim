@@ -1,0 +1,92 @@
+{
+  "code": "05",
+  "title": "Deux réseaux, un routeur",
+  "objectif": "Configurez le routeur afin qu'Alice puisse récupérer le flag en accédant au serveur situé sur un autre réseau.",
+  "hints": [
+    "Le LAN A (où est le PC d'Alice) et B (où est le Serveur) sont déjà câblés et configurés",
+    "Chaque interface du routeur doit appartenir à un réseau différent",
+    "Les machines doivent utiliser la bonne passerelle",
+    "Le routeur relie les deux LAN"
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC d'Alice",
+      "ip": "192.168.1.10",
+      "mask": "255.255.255.0",
+      "gateway": "192.168.1.1",
+      "x": 80,
+      "y": 50,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-LAN-A",
+      "ports": 2,
+      "x": 260,
+      "y": 50,
+      "editable": false,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "router",
+      "name": "Routeur",
+      "interfaces": [
+        {
+          "name": "eth0",
+          "ip": "",
+          "mask": "", 
+          "editable": true
+        },
+        {
+          "name": "eth1",
+          "ip": "",
+          "mask": "", 
+          "editable": true
+        }
+      ],
+      "x": 500,
+      "y": 20,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-LAN-B",
+      "ports": 2,
+      "x": 740,
+      "y": 50,
+      "editable": false,
+      "interfacesEditable": false,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "server",
+      "name": "Serveur",
+      "ip": "10.0.0.2",
+      "mask": "255.255.255.0",
+      "gateway": "10.0.0.1",
+      "x": 940,
+      "y": 50,
+      "editable": false,
+      "interfacesEditable": false,
+      "consoleAccessible": false
+    }
+  ],
+
+  "links": [
+    { "link": ["PC d'Alice", 0, "Switch-LAN-A", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch-LAN-A", 1, "Routeur", 0], "editable": false, "type": "Fast Ethernet" },
+    { "link": ["Routeur", 1, "Switch-LAN-B", 0], "editable": false, "type": "Fast Ethernet" },
+    { "link": ["Switch-LAN-B", 1, "Serveur", 0], "editable": false, "type": "Fast Ethernet" }
+  ],
+  "pingsToValidate": [
+    { "sourceDevice": "PC d'Alice", "targetDevice": "Serveur", "flag": "INTERCONNEXION" }
+  ]
+}

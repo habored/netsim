@@ -1,0 +1,39 @@
+<p>Dans ce scénario, vous avez montré que vous savez configurer un réseau local autour d'un switch. </p>
+
+<h3>📖✏️ À retenir</h3>
+
+<ul>
+  <li>Avec le masque utilisé initialement par le PC d'Alice était <code>255.255.0.0</code></li>
+  <li>Les deux premiers octets des adresses IP devaient donc être identiques.</li>
+  <li>Si l'adresse IP <code>172.16.0.45</code> était gardée, cela signifie que le net ID était <code>172.16.0.0</code></li>
+  <li>Le PC de Bob devait donc être configuré avec une adresse IP du type <code>172.16.X.Y</code> (où X et Y sont des nombres entre 1 et 254)</li>
+</ul>
+
+<h3>✅ Exemple valide</h3>
+
+<table>
+  <tr>
+    <th>Machine</th>
+    <th>Adresse IP</th>
+    <th>Masque</th>
+  </tr>
+  <tr>
+    <td>PC d'Alice</td>
+    <td>172.16.0.45</td>
+    <td>255.255.0.0</td>
+  </tr>
+  <tr>
+    <td>PC de Bob</td>
+    <td>172.16.0.46</td>
+    <td>255.255.0.0</td>
+  </tr>
+</table>
+
+<h3>🚀 Dans le prochain scénario...</h3>
+
+<p>Les machines seront placées dans <strong>des réseaux différents</strong>.</p>
+
+<p>Vous découvrirez alors le rôle d'une nouvelle machine : le <strong>routeur</strong> et l'importance de la <strong>passerelle par défaut</strong>.</p>
+
+<p>Un routeur est une machine d'interconnexion entre plusieurs réseaux.</p>
+<p>Pour appartenir à différents réseaux afin de la faire communiquer, un routeur possède plusieurs adresse IP.</p>

@@ -1,0 +1,127 @@
+{
+  "code": "11",
+  "title": "Comment les deux protocoles de routage (RIP et OSPF) peuvent co-exister : Le rôle des routeurs frontières",
+  "objectif": "Configurez R2 pour en faire un traducteur de routes entre les deux zones et ainsi rétablir la communication.",
+  "hints": [
+    "Zone A (RIP) : réseau simple, petites entreprises ou réseau local. ",
+    "Zone B (OSPF) : réseau plus complexe, type entreprise ou campus.",
+    "R1 et R3 : routeurs internes à chaque zone. ",
+    "Pinguez depuis le PC vers le serveur et observez le chemin suivi en mode simulation",
+    "Les deux zones ne peuvent pas communiquer car elles ne parlent pas le même langage...",
+    "Utilisez les configurations de R2 pour transformer ce dernier en traducteur de routes entre les deux zones (redistribution).",
+    "Attention : L'échange d'information entre les routeurs peut prendre un peu de temps..."
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC d'Alice",
+      "ip": "192.168.1.10",
+      "mask": "255.255.255.0",
+      "gateway": "192.168.1.1",
+      "x": 20,
+      "y": 120,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-LAN-A",
+      "ports": 2,
+      "x": 150,
+      "y": 20,
+      "editable": false
+    },
+
+    {
+      "type": "router",
+      "name": "R1 (RIP)",
+      "interfaces": [
+        { "name": "eth0", "ip": "192.168.1.1", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.0.1.1", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["RIP"] , "editable": false},
+        "table": { "rows": [],  "editable": false }
+      },
+      "x": 350,
+      "y": 20,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "router",
+      "name": "R2",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.0.1.2", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.0.2.1", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["RIP"] , "editable": true},
+        "table": { "rows": [],  "editable": false }
+      },
+      "x": 500,
+      "y": 200,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "router",
+      "name": "R3 (OSPF)",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.0.2.2", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.0.3.1", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["OSPF"] , "editable": false},
+        "table": { "rows": [],  "editable": false }
+      },
+      "x": 650,
+      "y": 20,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-LAN-B",
+      "ports": 2,
+      "x": 850,
+      "y": 20,
+      "editable": false
+    },
+
+    {
+      "type": "server",
+      "name": "Serveur",
+      "ip": "10.0.3.2",
+      "mask": "255.255.255.0",
+      "gateway": "10.0.3.1",
+      "x": 1000,
+      "y": 120,
+      "editable": false,
+      "interfacesLinkables": false
+    }
+  ],
+
+  "links": [
+    { "link": ["PC d'Alice", 0, "Switch-LAN-A", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch-LAN-A", 1, "R1 (RIP)", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R1 (RIP)", 1, "R2", 0], "editable": false, "type": "Fast Ethernet" },
+    { "link": ["R2", 1, "R3 (OSPF)", 0], "editable": false, "type": "Fast Ethernet" },
+    { "link": ["R3 (OSPF)", 1, "Switch-LAN-B", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch-LAN-B", 1, "Serveur", 0], "editable": false, "type": "Ethernet" }
+  ],
+
+  "pingsToValidate": [
+    {
+      "sourceDevice": "PC d'Alice",
+      "targetDevice": "Serveur",
+      "flag": "ROUTING_WAR"
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "code": "10",
+  "title": "Le protocole OSPF", 
+  "objectif": "Créez une route périphérique ultra rapide.",
+  "hints": [
+    "Pinguez le serveur depuis le PC et observez le chemin suivi en mode simulation",
+    "Observez attentivement les câblages des chemins possibles entre le PC et le serveur",
+    "❓ Trouver comment faire pour que le paquet arrive le plus vite possible, quitte à traverser davantage de routeurs... ❓"
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC d'Alice",
+      "ip": "192.168.1.10",
+      "mask": "255.255.255.0",
+      "gateway": "192.168.1.1",
+      "x": 20,
+      "y": 120,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-LAN-A",
+      "ports": 2,
+      "x": 200,
+      "y": 20,
+      "editable": false
+    },
+
+    {
+      "type": "router",
+      "name": "R1 (OSPF)",
+      "interfaces": [
+        { "name": "eth0", "ip": "192.168.1.1", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.0.1.1", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth2", "ip": "10.0.4.2", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["OSPF"] , "editable": false},
+        "table": { "rows": [],  "editable": false }
+      },
+      "x": 450,
+      "y": 60,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "router",
+      "name": "R2 (OSPF)",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.0.1.2", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.0.2.1", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["OSPF"] , "editable": false},
+        "table": { "rows": [],  "editable": false }
+      },
+      "x": 450,
+      "y": 220,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "router",
+      "name": "R3 (OSPF)",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.0.2.2", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.0.3.1", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["OSPF"] , "editable": false},
+        "table": { "rows": [],  "editable": false }
+      },
+      "x": 750,
+      "y": 200,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "router",
+      "name": "R4 (OSPF)",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.0.4.1", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.0.3.2", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth2", "ip": "172.16.0.253", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["OSPF"] , "editable": false},
+        "table": { "rows": [],  "editable": false }
+      },
+      "x": 680,
+      "y": 20,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-LAN-B",
+      "ports": 3,
+      "x": 900,
+      "y": 20,
+      "editable": false
+    },
+
+    {
+      "type": "server",
+      "name": "Serveur",
+      "ip": "172.16.0.10",
+      "mask": "255.255.255.0",
+      "gateway": "172.16.0.253",
+      "x": 1050,
+      "y": 120,
+      "editable": false,
+      "interfacesLinkables":false
+    }
+  ],
+
+  "links": [
+    { "link": ["PC d'Alice", 0, "Switch-LAN-A", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch-LAN-A", 1, "R1 (OSPF)", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R1 (OSPF)", 1, "R2 (OSPF)", 0], "editable": true, "type": "Ethernet" },
+    { "link": ["R2 (OSPF)", 1, "R3 (OSPF)", 0], "editable": true, "type": "Ethernet" },
+    { "link": ["R3 (OSPF)", 1, "R4 (OSPF)", 1], "editable": true, "type": "Ethernet" },
+    { "link": ["Switch-LAN-B", 2, "Serveur", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R4 (OSPF)", 2, "Switch-LAN-B", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R1 (OSPF)", 2, "R4 (OSPF)", 0], "editable": false, "type": "Ethernet" }
+  ],
+
+  "pingsToValidate": [
+    {
+      "sourceDevice": "PC d'Alice",
+      "targetDevice": "Serveur",
+      "flag": "PLUS_RAPIDE"
+    }
+  ]
+}

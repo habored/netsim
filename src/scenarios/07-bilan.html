@@ -1,0 +1,38 @@
+<h3>🔍 Ce que vous avez observé</h3>
+
+<ul>
+  <li>Il y avait ici 3 réseaux différents :
+    <ul>
+      <li>Le réseau local de PC1 : avec son switch et le routeur R1 permettant au PC1 de communiquer avec l'extérieur de son réseau local</li>
+      <li>Le réseau local du serveur : avec son switch et le routeur R2 permettant au serveur de communiquer avec l'extérieur de son réseau local</li>
+      <li>Le réseau formé par le deux routeurs : ce réseau est nécessaire pour que les deux routeurs puissent communiquer entre eux</li>
+    </ul> 
+  </li>
+</ul>
+
+<h3>🧠 Nouvelle notion découverte</h3>
+
+  <ul>
+    <li>Les routeurs ne connaissent pas automatiquement tous les réseaux.</li>
+    <li>Ils utilisent une table de routage pour décider où envoyer les paquets.</li>
+</ul>
+
+<h3>📖✏️ À retenir : La table de routage</h3>
+
+<ul>
+  <li>Un routeur sait à "qui" transmettre un paquet en suivant "bêtement" sa <strong>table de routage</strong>.</li>
+  <li>Dans une table de routage, chaque <strong>ligne</strong> correspond à une règle à appliquer selon le réseau de destination.</li>
+  <li>Dans une table de routage, la colonne <strong>Destination</strong> indique un réseau atteignable.</li>
+  <li>La colonne <strong>Destination</strong> contient uniquement des <strong>adresses de réseaux</strong>. Le routeur n'a pas besoin de connaitre les adresses des hôtes.</li>
+  <li>Si le <strong>réseau de destination du paquet à transmettre n'est pas présent</strong> dans la colonne : soit le routage <strong>échoue</strong>, car le routeur ne sait pas quoi faire !, soit le routeur va utiliser une <strong>route par défaut</strong>.</li>
+  <li>La colonne <strong>Masque</strong> sert à déterminer précisément l'adresse du réseau, car par exemple <code>10.0.0.0</code> peut être en <code>/16</code> ou <code>/24</code> : il faut savoir pour comparer correcement avec l'adresse de destination à atteindre.</li>
+  <li>La colonne <strong>Interface</strong> indique le nom ou <strong>l'adresse IP de l'interface</strong> que le routeur doit utiliser pour transmettre le paquet à la prochaine machine.</li>
+  <li>Avec la colonne <strong>Interface</strong>, le routeur n'a même pas besoin de connaitre son voisin : il a juste à "faire sortir" le paquet par tel interface.</li> 
+</ul>
+
+<p>On a utilisé ici le <strong>routage statique</strong>, c'est-à-dire une configuration où les routes sont définies manuellement par l'administrateur réseau, sans adaptation automatique aux changements de topologie ou de trafic.</p>
+
+<h3>🚀 Dans le prochain scénario...</h3>
+
+<p>Plusieurs chemins seront disponibles vers le même réseau.</p>
+<p>Vous découvrirez comment un routeur choisit le meilleur chemin avec un routage automatique.</p>

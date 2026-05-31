@@ -1,0 +1,24 @@
+<h3>🔍 Ce que vous avez observé</h3>
+
+<ul>
+    <li>Lors du premier ping, plusieurs tables (ARP et routage) se remplissent, ce qui permet aux échanges suivants d’être plus rapides.</li>
+    <li>Un réseau <strong>n’est pas linéaire</strong> : il existe plusieurs chemins possibles pour aller d'un endroit à l'autre.</li>
+    <li>On a ici utilisé le <strong>routage dynamique avec RIP</strong> : les routeurs découvrent automatiquement les chemins disponibles et s’adaptent à la topologie du réseau.</li>
+    <li>Quand plusieurs chemins sont possibles, le réseau semble utiliser le "plus court chemin", même s'il a déjà appris un chemin plus long en premier.</li>
+</ul>
+
+<h3>📖✏️ À retenir</h3> 
+<ul>
+    <li>La <strong>redondance</strong> est un principe important des réseaux : il permet de maintenir le service en cas de panne partielle sur le réseau.</li>
+</ul>
+<h4>RIP : le choix du chemin avec le moins de sauts</h4>
+<ul>
+    <li>Contrairement au routage statique, le protocole RIP permet de remplir <strong>automatiquement</strong> les tables de routage.</li>
+    <li>Quand le protole RIP est utilisé sur un routeur, celui-ci échange automatiquement et régulièrement des informations avec ses voisins pour <strong>construire et mettre à jour</strong> sa table de routage.</li>
+    <li>Dans la table de routage, on peut alors voir une <strong>colonne</strong> indiquant le <strong>nombre de sauts</strong>, c'est-à-dire le nombre de routeurs à traverser avant que le paquet atteingne sa destination</li>
+    <li>Lorsque <strong>plusieurs chemins existent</strong> vers une même destination : le routeur choisit le chemin qui compte le <strong>moins de sauts</strong>.</li>
+    <li>On dit que le "nombre de sauts" est la <strong>métrique utilisée</strong> par RIP; car d'autres protocoles utilisent d'autres critères/mesures/métriques pour choisir le "meilleur" chemin à prendre.</li>
+</ul>
+
+<h3>🚀 Dans la suite du scénario...</h3>
+<p>On observera un cas particulier où le chemin aller n'est pas le même que le chemin retour et on essayera de comprendre pourquoi.</p> 

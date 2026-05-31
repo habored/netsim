@@ -1,0 +1,82 @@
+{
+  "code": "04",
+  "title": "Faire communiquer deux réseaux différents !",
+  "objectif": "Permettez au PC d'accéder au serveur situé sur un autre réseau.",
+  "hints": [
+    "Le serveur est dans un autre sous-réseau",
+    "Le routeur sert à relier plusieurs réseaux",
+    "Pour appartenir à différents réseaux afin de la faire communiquer, un routeur possède plusieurs adresse IP.",
+    "Les machines des réseaux doivent avoir une passerelle pour communiquer à l'extérieur de leur réseau ",
+    "La passerelle est simplement l'adresse IP du routeur dans le réseau de la machine",
+    "Pinguez le serveur depuis le PC d'Alice pour obtenir le flag",
+    "Passez en mode simulation pour suivre pas à pas le déroulé du ping"],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC d'Alice",
+      "ip": "192.168.1.10",
+      "mask": "255.255.255.0",
+      "gateway": "",
+      "x": 80,
+      "y": 110,
+      "editable": true,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-A",
+      "ports": 2,
+      "x": 300,
+      "y": 110
+    },
+
+    {
+      "type": "router",
+      "name": "Routeur",
+      "interfaces": [
+        {
+          "name": "eth0",
+          "ip": "192.168.1.254",
+          "mask": "255.255.255.0",
+          "editable": false
+        },
+        {
+          "name": "eth1",
+          "ip": "10.0.0.1",
+          "mask": "255.255.255.0",
+          "editable": false
+        }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["RIP"] , "editable": false},
+        "table": {
+          "rows": [],
+        "editable": false
+        }
+      },
+      "x": 520,
+      "y": 110
+    },
+
+    {
+      "type": "server",
+      "name": "Serveur",
+      "ip": "10.0.0.2",
+      "mask": "255.255.255.0",
+      "gateway": "10.0.0.1",
+      "x": 780,
+      "y": 110
+    }
+  ],
+
+  "links": [
+    { "link": ["PC d'Alice", 0, "Switch-A", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch-A", 1, "Routeur", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["Routeur", 1, "Serveur", 0], "editable": false, "type": "Ethernet" }
+  ],
+  "pingsToValidate": [
+    { "sourceDevice": "PC d'Alice", "targetDevice": "Serveur", "flag": "GATEWAY" }
+  ]
+}

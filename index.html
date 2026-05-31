@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N.S.I.</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <style>
+      :root { --primary: #06b6d4; --secondary: #5e46e5; --bg: #eef2f7; --panel: #f8fafc; --pc: #ad73c8; --switch: #fbbf24; --server: #22c55e; --router: #ef4444; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: sans-serif; font-size: 12px; height: 100vh; display: flex; flex-direction: column; background: var(--bg); }
+      code { font-family: monospace; font-size: 1.1em; }
+      
+      /* MAIN HEADER & LAYOUT */
+      #buttonsPanel { background: #fff; padding: 10px; border-bottom: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+      #appContainer { flex: 1; position: relative; background: #cbd5e1; }
+      #networkCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+      
+      /* GENRIC MODALS */
+      .modal-overlay { position: fixed; inset: 0; background: var(--secondary); z-index: 10000; display: flex; justify-content: center; align-items: center; }
+      .modal-overlay.hidden { display: none; }
+      .modal-panel { background: white; padding: 25px; border-radius: 12px; max-width: 90%; max-height: 90vh; overflow-y: auto; border: 4px solid var(--primary); }
+      .fullscreen .modal-panel { min-width: 100vw; min-height: 100vh; border: none; border-radius: 0px;}
+      .close-btn { width: 32px; height: 32px; border: none; border-radius: 8px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 16px;  cursor: pointer; display: flex; margin: 15px auto 0 auto; transition: 0.2s; }
+      .close-btn.text {width: fit-content; background: #22c55e;}
+      .close-btn:hover { background: rgba(255, 0, 0, 0.2); transform: scale(1.05); }
+      .close-btn.text:hover { background: #2fc605;}
+      .modal-panel h2 { margin: 1rem 0 2rem 0; font-size: 20px; color: #60a5fa; letter-spacing: 0.5px; border-bottom: 1px solid #73c2f2; padding-bottom: 5px; }
+      .modal-panel h3 { margin: 1.5rem 0; }/* CHALLENGE PATH WINDOWS */
+      #challengePathPanel { width: 100vw; /* Adjust as needed */ }
+      #challengeList { position: relative; padding-left: 28px; display: flex; flex-direction: column; gap: 18px; /* Ensure cards have a minimum width */ }
+      #challengeList::before { content: ""; position: absolute; left: 10px; top: 0; bottom: 0; width: 3px; background: linear-gradient(   to bottom,   #22c55e,   #3b82f6,   #a855f7 ); border-radius: 999px; opacity: 0.6; } 
+      .challenge-card { position: relative; border-radius: 14px; padding: 0 14px 12px 14px; font-size: 0.9em;  line-height: 1.4; }
+        /* point sur le chemin */
+      .challenge-card::before { content: ""; position: absolute; left: -26px; top: 18px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #334155; background: #0b1220; }
+        /* unlocked */
+      .challenge-card.unlocked { background-color: var(--secondary); color: white; transition: transform 0.2s ease, box-shadow 0.2s ease;  }
+      .challenge-card.unlocked::before { background: #22c55e; border-color: #16a34a; }
+      .challenge-card.unlocked:hover { transform: translateY(-10px); box-shadow: 0 20px 35px rgba(34,197,94,0.25); }
+        /* locked */
+      .challenge-card.locked { opacity: 0.6;  background-color: #f1f5f9; color: #475569; border: 1px dashed #1f2937;}
+      .challenge-card.locked::before { background: #374151; }
+       /* titre et descriptions */
+      .challenge-card .btn { margin-top: 10px;  width: auto;  display: inline-block; }
+      /* bouton pour entrer le flag */
+      .flag-input-container { display: flex; gap: 5px; margin-top: 10px; }
+      .flag-input-container input { flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; align-self: end;}
+      .flag-input-container .btn { padding: 8px 12px; }
+
+      /* MAIN HELP MODAL */
+      #helpList ul {   display: grid;   gap: 20px;   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));}
+      #helpList li { align-self: center; background: #74f3d6; padding: 10px; border-radius: 8px; border: 1px solid #49dfbc; list-style: none; }
+      
+      /* BILAN MODAL */
+      #bilanPanel { width: 100vw; /* Adjust as needed */  animation: bilanPop 0.45s ease; line-height: 1.7; }
+      @keyframes bilanPop {
+        from { opacity: 0; transform: scale(0.92) translateY(20px);}
+        to { opacity: 1; transform: scale(1) translateY(0);}
+      }
+      #bilanContent { margin-top: 20px; text-align: left; }
+      #bilanContent strong { color: var(--secondary); }
+      #bilanContent table { overflow: hidden; border-radius: 5px; margin-top: 1rem; background: rgba(192, 218, 255, 0.545);}
+      #bilanContent th { background: linear-gradient(90deg, var(--primary), var(--secondary)); color: white; padding: .2rem; font-size: 0.95rem; text-align: left; }
+      #bilanContent td { padding: .2em; border-bottom: 1px solid var(--primary);}
+      #bilanContent tr:hover td { background-color: rgba(118, 235, 250, 0.53); }
+      #bilanContent ul { list-style: none; padding: 0; display: grid; gap: 16px; margin-top: 20px; }
+      #bilanContent li {  margin-bottom: 5px; position: relative; border: 1px solid rgba(118, 235, 250, 0.53); padding: 1em; border-radius: 18px; background-color: #ddebff; transition:   transform 0.25s ease,   box-shadow 0.25s ease,   border-color 0.25s ease; }
+      #bilanContent li:hover { transform: translateY(-4px); background-color: rgba(118, 235, 250, 0.53); border: 1px solid var(--primary);}
+      #bilanContent li li { margin: 0; padding: 5px 10px; border-radius: 4px;  }
+      
+      /* App Bottom Panels */
+      #topology { position: relative; width: 100%; min-height: 260px/* Kept min-height */;   height: calc(100vh - 420px); overflow: hidden;background-color: #e2e8f0; }
+      #botPanel { display: flex; flex: fit-content; height: fit-content; overflow: hidden; background: var(--panel); border-top: 1px solid #cbd5e1; }
+      #modePanel { display: flex; flex-direction: column; min-height: 0; flex: 1; max-height: 400px;}
+      #leftBotPanel, #rightBotPanel { flex: 1; display: flex; flex-direction: column; padding: 10px; overflow-y: auto; }
+      #leftBotPanel { border-right: 1px solid #cbd5e1; }
+      
+      .btn { padding: 8px 16px; border-radius: 6px; border: none; background: linear-gradient(90deg, var(--primary), #3b82f6); color: white; cursor: pointer; font-weight: bold; }
+      .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+      .hidden { display: none !important; }
+
+      #console { background: #0f172a; color: #38bdf8; padding: 10px; font-family: monospace; border-radius: 8px; flex: 1; display: flex; flex-direction: column; }
+      #consoleOutput { flex: 1; overflow-y: auto; margin-bottom: 5px; }
+      #consoleInput { background: transparent; border: none; color: white; width: 100%; outline: none; }
+
+      /* Existing styles, adjusted selectors */
+      h1 { margin: 0;  font-size: 18px; } /* Kept h1 style */
+      /* Existing styles, adjusted selectors or moved to general classes */
+      .expand { flex: 1; }
+
+      /* #challenges-overlay and #challenges-overlay input styles are now covered by .modal-overlay and .flag-input-container input */
+      h2#titreScenario  { margin: .2rem 0 1.5rem 0; }
+      #hintsScenario { margin-top: 20px; }
+      #hintsScenario div { margin-top: 5px; }
+      .config #simulationPanel { display: none; }
+      .simulation #simulationPanel { display: flex; }
+      .config #devicesInteraction { display: flex; }
+      .simulation #devicesInteraction { display: none; }
+      canvas { position: absolute; inset: 0; }
+      button { margin-right: 0; padding: 6px 10px; border: 1px solid transparent; border-radius: 6px; background-color: var(--primary); color: #fff; cursor: pointer; display: inline-flex;align-items: center; justify-content: center; }
+      button:hover { filter: brightness(0.96); }
+      button:disabled { background: #cbd5e1; color: #64748b; cursor: not-allowed; filter: none; }
+      button.secondary { background: #e2e8f0; color: #0f172a; }
+      button.active { background: #0f766e; color: #fff; }
+      button.danger { background: #cc0000; }
+      #linkBtn { display: none; }
+      #buttonsPanel { background: #fff; display: flex; flex-wrap: wrap; align-items: center; gap: 8px;width: 100%; padding: 8px 10px; border-bottom: 1px solid #e2e8f0; }
+      #devicesInteraction { display: flex; flex: 1; min-height: 0; gap: 12px; padding: 12px; }
+      #devicesInteractionLeft { flex: 1.1; min-width: 280px; min-height: 0; display: flex; flex-direction: column; }
+      #deviceName { background-color: var(--primary); color: white; font-size: 1.2em; font-family: "Courier New", monospace;line-height: 200%; border-radius: 8px 8px 0 0; padding: 0 10px; }
+      #deviceName.pc { background-color: var(--pc); }
+      #deviceName.switch { background-color: var(--switch); }
+      #deviceName.server { background-color: var(--server); }
+      #deviceName.router { background-color: var(--router); } 
+      #deviceInfos { padding: 12px; display: flex; flex-flow: column; gap: 12px; flex: 1; min-height: 0;overflow: auto; background: #fff; border: 1px solid #dbe3ed; border-top: none;border-radius: 0 0 8px 8px; }
+      #deviceInfos > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+      #deviceInfos input { min-width: 14rem; width: 50%; border: 1px solid #94a3b8; border-radius: 6px;outline: none; padding: 6px 8px; }
+      #deviceInfos input:focus { border-color: #2563eb; outline: none; }
+      #status { font-style: italic; }
+      input[disabled] { color: #334155; border-color: #c7c7c7 !important; background: #f8fafc !important; cursor: not-allowed; }
+      #simulationHeadBar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-bottom: 1px solid #e2e8f0; }
+      #console { display: none; flex-direction: column; min-height: 180px; background: #111827; border-color: #111827; border-radius: 8px; padding: 3px; flex: 1;  }
+      #console #headBar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-bottom: 1px solid #e2e8f0;  background: #0f172a; border-bottom-color: #1e293b; color: #f8fafc; border-radius: 10px; }
+      #consoleOutput, #consoleInput { background: #111827; color: #e5e7eb; font-family: monospace; font-size: 12px;border: none; border-radius: 10px; }
+      #consoleOutput { flex: 1; min-height: 0; overflow: auto; padding: 8px; }
+      #consoleInput { width: 100%; padding: 8px; border-top: 1px solid #1e293b; }
+      #consoleInput:focus { outline: none; }
+      #simulationPanel { display: flex; flex-direction: column; gap: 10px; padding: 0 10px;min-height: 0; overflow: hidden; }
+      #simulationControls { display: flex; flex-wrap: wrap; gap: 8px; }
+      #simulationBody { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 0.95fr);gap: 10px; overflow: hidden; }
+      #simulationBodyLeft { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow-y: auto; }
+      #simulationStatus { color: #475569; }
+      #simulationCurrentStep { flex-shrink: 0; min-height: 98px; padding: 10px; border-radius: 8px;border: 1px solid #fed7aa; background: #fff7ed; }
+      .currentStepTitle { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+      .stepBadge { display: inline-flex; align-items: center; justify-content: center; min-width: 34px;padding: 2px 8px; border-radius: 999px; background: #0f766e; color: #fff;font-size: 11px; font-weight: bold; }
+      .detailLine, .deviceInterfaceLine { margin-top: 4px; color: #334155; }
+      #simulationTimeline { padding: 6px; border-radius: 8px; border: 1px solid #e2e8f0;background: #f8fafc; min-height: 0; overflow: visible; }
+      .stepItem { padding: 8px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; }
+      .stepItem:hover { background: #cdf3ff; border-color: #4d61ff; }
+      .stepItem.active { background-color: #cdf3ff; border: 1px solid #4d61ff; }
+      #simulationBodyRight { padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0;background: #f8fafc; min-height: 0; overflow-y: auto; }
+      .tableCard { background: #fff; border: 1px solid #dbe3ed; border-radius: 8px;padding: 10px; margin-bottom: 8px; }
+      .tableCard:last-child { margin-bottom: 0; }
+      .tableCardTitle { font-weight: bold; margin-bottom: 8px; }
+      .deviceInterfaces { display: grid; gap: 4px; margin-bottom: 10px; }
+      .tableSection { margin-top: 10px; }
+      .tableSection:first-of-type { margin-top: 0; }
+      .tableSectionTitle { font-weight: bold; margin-bottom: 6px; color: #0f766e; }
+      .tableEmpty, .muted { color: #64748b; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { text-align: left; padding: 4px 6px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+      th { color: #475569; font-weight: bold; background: #f8fafc; }
+      /* juste pour protocole sur routeur pour le moment */
+      .checkbox-list { display: flex; flex-direction: row; min-width: 50%;}
+      .checkbox-item { flex: 1;}
+      .checkbox-item input { min-width: 1rem!important; max-width: fit-content !important; margin-right: 8px; }
+      .checkbox-item p { display: inline-block; }
+      .help:hover { cursor: help;}
+      .tableEditorPanel { flex: 1.1; display: flex; flex-direction: column; background: #fff; border: 1px solid #dbe3ed; border-radius: 8px; padding: 12px; overflow: hidden;}
+      .barTitleButtons {display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;}
+      .buttonsContainer { display: flex; gap: 5px;}
+      .tableEditorPanel h4 {background-color: #a6f82d; padding: 5px;}
+      /* Media queries */
+      @media (max-width: 1100px) { 
+        h1 { display: none; }
+        #topology { height: calc(100vh - 420px); }
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="buttonsPanel">
+      <h1>Network Simulation Interactive</h1>
+      <button id="linkBtn">Lier</button>
+      <div class="expand"></div>
+      <button id="helpBtn" class="secondary">📌</button>
+      <button id="menuChallengesBtn" class="secondary">⁝☰</button>
+      <button id="consigneBtn" class="secondary">🎯</button>
+      <button id="modeToggleBtn" class="secondary">👨‍🏫</button>
+    </div>
+    <div id="topology">
+      <canvas id="networkCanvas"></canvas>
+    </div>
+    <div id="botPanel">
+      <div id="modePanel">
+        <div id="devicesInteraction">
+          <div id="devicesInteractionLeft">
+            <div id="deviceName"></div>
+            <div id="deviceInfos"></div>
+          </div>
+
+          <!--ROTING TABLE BOT PANEL-->
+          <div id="routingTableEditor" class="hidden tableEditorPanel">
+            <div class="barTitleButtons">
+              <strong id="routingTableEditorTitle">Table de Routage</strong>
+              <div class="buttonsContainer"> 
+                <button id="saveRoutingTableBtn">Enregistrer et fermer</button>
+                <button id="cancelRoutingTableBtn" class="close-btn" style="margin:0">❌</button>
+              </div>
+            </div>
+            <span id="routingTableEditorMessage"></span>
+            <div style="flex: 1; overflow-y: auto;">
+              <table style="font-size: 11px; width: 100%;">
+                <thead>
+                  <tr>
+                    <th title="Protocole à l'origine de cette information" class="help">Protocole</th>
+                    <th title="Adresse du réseau atteignable" class="help">Réseau de destination</th>
+                    <th title="Masque associé au réseau atteignable" class="help">Masque</th>
+                    <th title="Adresse IP du prochain saut (next-hop)" class="help">Next-hop</th>
+                    <th title="Interface de sortie pour atteindre le réseau" class="help">Interface</th>
+                    <th title="Coût à interpréter selon le protocole (sauts RIP, coût OSPF)" class="help">Coût</th>
+                    <th style="width: 20px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="routingTableEditorBody"></tbody>
+              </table>
+              <button id="addRoutingRowBtn" class="secondary help" style="margin-top:5px; background-color: whitesmoke;" title="Ajouter une règle de routage">&#10133;</button>
+            </div>
+          </div>
+          
+          <!--FIREWALL BOT PANEL-->
+          <div id="firewallEditor" class="hidden tableEditorPanel">
+            <div class="barTitleButtons">
+              <strong>Firewall</strong>
+              <div class="buttonsContainer"> 
+                <button id="saveFirewallBtn">Enregistrer et fermer</button>
+                <button id="cancelFirewallBtn" class="close-btn" style="margin:0">❌</button>
+              </div>
+            </div>
+            <div style="flex: 1; overflow-y: auto;">
+              <h4>Règles d'accès (ACL)</h4>
+              <p>Pour un hôte unique, utilisez le masque any, /32 ou vide.</p>
+              <table>
+                <thead>
+                  <tr>
+                    <th title="Adresse IP source ou réseau (ex: 192.168.1.0)" class="help">Source IP</th>
+                    <th title="Masque de sous-réseau source (ex: 255.255.255.0 ou /24)" class="help">Masque Src</th>
+                    <th title="Adresse IP de destination ou réseau (ex: 10.0.0.10)" class="help">Dest. IP</th>
+                    <th title="Masque de sous-réseau destination" class="help">Masque Dst</th>
+                    <th title="Protocole (ICMP, TCP, UDP, ou vide pour tout)" class="help">Protocole</th>
+                    <th title="Action (allow ou deny)" class="help">Action</th>
+                    <th style="width: 20px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="firewallAccessRulesBody"></tbody>
+              </table>
+              <button id="addAccessRuleBtn" class="secondary help" style="margin-top:5px; background-color: whitesmoke;" title="Ajouter une règle d'accès">&#10133;</button>
+
+              <div style="margin: 15px 0; padding: 10px; background: #f1f5f9; border-radius: 6px; display: flex; align-items: center; gap: 15px;">
+                <strong>Politique par défaut :</strong>
+                <select id="firewallDefaultPolicy">
+                  <option value="deny">Default Deny (Tout interdire)</option>
+                  <option value="allow">Default Allow (Tout autoriser)</option>
+                </select>
+                <span class="muted" style="font-size: 0.85em;">appliquée si aucune règle ne correspond.</span>
+              </div>
+              <h4>Règles NAT</h4>
+              <table style="font-size: 11px; width: 100%;">
+                <thead>
+                  <tr>
+                    <th title="Adresse IP publique ou réseau (ex: 203.0.113.1)" class="help">IP Publique</th>
+                    <th title="Masque de sous-réseau public" class="help">Masque Pub.</th>
+                    <th title="Adresse IP privée ou réseau (ex: 192.168.1.10)" class="help">IP Privée</th>
+                    <th title="Masque de sous-réseau privé" class="help">Masque Priv.</th>
+                    <th style="width: 20px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="firewallNatRulesBody"></tbody>
+              </table>
+              <button id="addNatRuleBtn" class="secondary help" style="margin-top:5px; background-color: whitesmoke;" title="Ajouter une règle NAT">&#10133;</button>
+            </div>
+          </div>
+          <div id="console">
+            <div id="headBar">
+              <strong>Console</strong>
+              <span class="muted">Commandes locales de l'équipement sélectionné</span>
+            </div>
+            <div id="consoleOutput"></div>
+              <input id="consoleInput" type="text" placeholder="Tapez une commande..." />
+          </div>
+        </div>
+        <div id="simulationPanel">
+          <div id="simulationHeadBar">
+            <strong>Vue simulation</strong>
+            <div id="simulationControls">
+              <button id="simAutoBtn" class="secondary active">Auto</button>
+              <button id="simPauseBtn" class="secondary">Pause</button>
+              <button id="simStepBtn" class="secondary">Pas-à-pas</button>
+              <button id="simPrevBtn" class="secondary">Prec.</button>
+              <button id="simNextBtn" class="secondary">Suiv.</button>
+              <div style="display:inline-flex; align-items:center; gap:8px; margin-left:10px; background: #f1f5f9; padding: 4px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                <label for="simSpeedRange" style="font-weight:bold; color:#475569;">🚀</label>
+                <input type="range" id="simSpeedRange" min="1000" max="10000" step="2000" value="4000" style="width:80px; margin:0;">
+                <label for="simSpeedRange" style="font-weight:bold; color:#475569;">🐢</label>
+                </div>
+              <button id="simResetBtn" class="danger">Reset simulation</button>
+            </div>
+          </div>
+          <div id="simulationBody">
+            <div id="simulationBodyLeft">
+              <div id="simulationStatus" class="muted">
+                Aucune simulation à lancer. Utilisez la console d'une machine et revenez ici pour l'exécuter pas à pas.
+              </div>
+              <div id="simulationCurrentStep"></div>
+              <div id="simulationTimeline"></div>
+            </div>
+            <div id="simulationBodyRight"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="consigneBlur" class="modal-overlay hidden">
+      <div id="consignePanel" class="modal-panel">
+          <h2 id="titreScenario"></h2>
+          <div id="objectifScenario"></div>
+          <div id="hintsScenario"></div>
+          <button id="startChallengeBtn" class="close-btn text" title="ESC.">Relevons ce défi !</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Challenge Path Overlay -->
+    <div id="challengePathBlur" class="modal-overlay hidden">
+      <div id="challengePathPanel" class="modal-panel">
+        <h2>⁝☰ Chemin des Défis</h2>
+        <div id="challengeList">
+          <!-- boutons des challenges rendus dynamiquement via main.js -->
+        </div>
+        <button class="close-btn"  title="ESC.">❌</button>
+      </div>
+    </div>
+
+    <!-- Bilan Modal -->
+    <div id="bilanBlur" class="modal-overlay hidden">
+      <div id="bilanPanel" class="modal-panel">
+        <h2 id="bilanTitle"></h2>
+        <div id="bilanContent"></div>
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+          <button id="bilanRetainBtn" class="close-btn text"  title="ESC.">J'ai tout compris !</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="helpBlur" class="modal-overlay hidden">
+      <div id="helpPanel" class="modal-panel">
+        <h2>📌 Aide générale</h2>
+        <div id="helpList">
+          <h3>🎯 Objectif du jeu</h3>
+            <p>Configurez un réseau et valider les flags en virifiant la connectivité avec la commande ping...</p>
+          <h3>🎮 Comment jouer ?</h3>
+                  <h4>Mode configuration</h4>
+
+          <ul>
+            <li>Si l'élément cliqué est <b>encadré en vert</b> : vous pouvez le configurez</li>
+            <li>Si l'élément cliqué n'est pas encadré en vert : vous pouvez <b>seulement consulter sa configuration</b></li>
+            <li>Les machines disposent de paramètres différents selon leur rôle dans le réseau</li>
+          </ul>
+                  <h4>Mode simulation</h4>
+                  <ul>
+                    <li>Le mode simulation permet d'exécuter étape par étape la dernière commande console lancé</li>
+                  </ul>
+
+          <h3>🔍 Comment diagnostiquer un problème</h3>
+          <ul>
+            <li>Vérifiez les IP et les masques : les deux machines sont-elles dans le même réseau ?</li>
+            <li>Testez les ping local</li>
+            <li>Testez les ping distant</li>
+            <li>Vérifiez les routes</li>
+            <li>Vérifiez les gateaways</li>
+            <li>Regardez les tables de routage</li>
+            <li>Vérifiez les firewalls</li>
+          </ul>
+        </div>
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px dashed #cbd5e1; text-align: center;">
+          <button id="resetProgressBtn" class="btn danger" style="font-size: 0.9em; opacity: 0.8;">Réinitialiser ma progression et tout recommencer</button>
+        </div>
+        <button id="closeChallengePathBtn" class="close-btn"  title="ESC.">❌</button>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,101 @@
+{
+  "code": "13",
+  "title": "NAT : Masquage d'adresses (SNAT)",
+  "objectif": "Configurez le NAT sur le routeur R1 pour permettre au réseau local d'accéder au serveur Web public (8.8.8.8).",
+  "hints": [
+    "Le routeur 'R-Internet' ne connaît pas le chemin vers votre réseau privé 192.168.1.0/24.",
+    "Sans NAT, 'R-Internet' reçoit vos paquets mais ne peut pas renvoyer la réponse (Destination unreachable).",
+    "Sélectionnez 'R1 (NAT)', allez dans 'Configurer le firewall' puis section 'Règles NAT'.",
+    "Ajoutez une règle : IP Publique '203.0.113.0' (masque 255.255.255.0) -> IP Privée '192.168.1.0' (masque 255.255.255.0).",
+    "Utilisez le mode simulation pour observer le changement de l'IP source quand le paquet sort de R1."
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC 1",
+      "ip": "192.168.1.10",
+      "mask": "255.255.255.0",
+      "gateway": "192.168.1.254",
+      "x": 50,
+      "y": 20,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": true
+    },
+    {
+      "type": "switch",
+      "name": "Switch-LAN",
+      "ports": 2,
+      "x": 250,
+      "y": 20,
+      "editable": false
+    },
+    {
+      "type": "router",
+      "name": "R1 (NAT)",
+      "interfaces": [
+        { "name": "eth0", "ip": "192.168.1.254", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "203.0.113.1", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing": {
+        "table": {
+          "rows": [
+            { "destination": "0.0.0.0", "mask": "0.0.0.0", "nextHop": "203.0.113.254", "interface": "eth1", "cost": 1 }
+          ],
+          "editable": false
+        }
+      },
+      "firewall": {
+        "editable": true,
+        "defaultPolicy": "allow",
+        "natRules": []
+      },
+      "x": 470,
+      "y": 20,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+    {
+      "type": "router",
+      "name": "R-Internet",
+      "interfaces": [
+        { "name": "eth0", "ip": "203.0.113.254", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "8.8.8.254", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing": {
+        "table": { "rows": [], "editable": false }
+      },
+      "x": 620,
+      "y": 150,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+    {
+      "type": "server",
+      "name": "Web Server",
+      "ip": "8.8.8.8",
+      "mask": "255.255.255.0",
+      "gateway": "8.8.8.254",
+      "x": 820,
+      "y": 150,
+      "editable": false,
+      "interfacesLinkables": false
+    }
+  ],
+
+  "links": [
+    { "link": ["PC 1", 0, "Switch-LAN", 0], "editable": false },
+    { "link": ["Switch-LAN", 1, "R1 (NAT)", 0], "editable": false },
+    { "link": ["R1 (NAT)", 1, "R-Internet", 0], "editable": false },
+    { "link": ["R-Internet", 1, "Web Server", 0], "editable": false }
+  ],
+
+  "pingsToValidate": [
+    {
+      "sourceDevice": "PC 1",
+      "targetDevice": "Web Server",
+      "flag": "NAT_CONFIG_REUSSIE"
+    }
+  ]
+}

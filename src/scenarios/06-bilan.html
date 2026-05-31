@@ -1,0 +1,100 @@
+<h3>📖✏️ À retenir : Le réseau dépend autant du matériel que des adresses IP.</h3>
+
+<ul>
+  <li>Même avec une bonne configuration IP, un <strong>problème physique</strong> peut bloquer le réseau.</li>
+  <li>Le <strong>diagnostique réseau</strong> consiste à analyser chaque étape du trajet</li>
+  <li>La communication implique des paramétrages des interfaces (logiciels) et des câblages (physiques) <strong>cohérents</strong> les uns avec les autres</li>
+</ul>
+
+<h3>Les raisons physiques qu'un chemin n'existe plus</h3>
+<ul>
+  <li><strong>Liaison</strong> atteinte
+    <ul>
+      <li>Câble réseau débranché</li>
+      <li>Câble réseau endommagé ou détruit</li>
+      <li>Mauvais branchement physique (topologie cassée, très rare)</li>
+    </ul>
+  </li>
+  <li><strong>Machine</strong> atteinte
+    <ul>
+      <li>Perte d’alimentation</li>
+      <li>Equipement en panne</li>
+      <li>Equipement endommagé ou détruit</li>
+    </ul>
+  </li>
+</ul>
+<h3>🔍 Ce que vous avez pu observer</h3>
+
+<ul>
+
+  <li>
+    Chaque routeur possède une <strong>table de routage</strong>.
+  </li>
+
+  <li>
+    Cette table indique vers quel <strong>réseau</strong> envoyer un paquet en fonction de sa destination.
+  </li>
+
+  <li>
+    Certains chemins peuvent exister au départ puis disparaître (panne, lien coupé, interface down).
+  </li>
+
+  <li>
+    D’autres chemins peuvent apparaître automatiquement lorsque le réseau change.
+  </li>
+
+  <li>
+    Le routage dépend donc de l’état réel du réseau à un instant donné.
+  </li>
+
+</ul>
+
+<h3>Les tables de routage et leur mise à jour dynamique</h3>
+
+<ul>
+
+  <li>
+    Une <strong>table de routage</strong> est une liste de règles qui indique
+    comment atteindre différents réseaux.
+  </li>
+
+  <li>
+    Chaque entrée contient généralement :
+    un réseau de destination, un prochain saut (next hop) et une interface de sortie.
+  </li>
+
+  <li>
+    Les routeurs peuvent apprendre automatiquement de nouvelles routes via des protocoles de routage.
+  </li>
+
+  <li>
+    On parle de <strong>mise à jour dynamique</strong> lorsque les routes changent sans intervention humaine.
+  </li>
+
+  <li>
+    Si un lien tombe, les routeurs peuvent recalculer un nouveau chemin.
+  </li>
+
+  <li>
+    Cela permet au réseau de rester fonctionnel même en cas de panne partielle.
+  </li>
+
+  <li>
+    Sans mise à jour dynamique, les routes deviennent rapidement obsolètes et la communication échoue.
+  </li>
+
+</ul>
+
+<h3>🚀 Dans le prochain scénario...</h3>
+
+<p>
+Vous allez explorer un réseau avec plusieurs chemins possibles entre deux machines.
+</p>
+
+<p>
+Certains chemins seront plus rapides que d’autres, et le routeur devra choisir la meilleure route.
+</p>
+
+<p>
+Vous découvrirez comment les routeurs optimisent les trajets grâce aux métriques de routage (coût, distance, vitesse).
+</p>

@@ -1,0 +1,56 @@
+
+<h3>🔍 Ce que vous avez pu observer</h3>
+
+<ul>
+  <li>Le Serveur et le PC d'Alice était sur des réseaux différents</li>
+  <li>Le ping du serveur vers le PC d'Alice fonctionnait à moitier :
+    <ul>
+      <li>il allait bien du Serveur jusqu'à Alice</li>
+      <li>mais le lien la réponse ne fonctionnait pas</li>
+    </ul>
+  </li>
+  <li>C'est parce que
+    <ul>
+      <li>le Serveur avait bien sa passerelle configurée sur l'IP du routeur.</li>
+      <li>mais le PC d'Alice n'avait pas de passerelle configurée.</li>
+    </ul>
+  </li>
+</ul>
+
+
+<h3>💡 Ce que vous avez appris</h3>
+
+<p>
+Vous savez maintenant que le réseau local ne suffit pas toujours :
+il faut un <strong>routeur</strong> pour relier plusieurs réseaux ensemble.
+</p>
+
+<p>
+Vous avez également compris le rôle essentiel de la <strong>passerelle par défaut</strong> aussi appelée <strong><i><i>gateway</i></i></strong>
+dans la sortie vers d’autres réseaux.
+</p>
+
+
+<h3>📖✏️ À retenir : Le rôle du routeur</h3>
+
+<ul>
+
+  <li>Un <strong>routeur</strong> sert à <strong>relier plusieurs réseaux IP</strong> différents entre eux.</li>
+
+  <li>Contrairement à un <i>switch</i> (qui travaille dans un seul réseau local), le routeur travaille au niveau des <strong>réseaux IP</strong>.</li>
+
+  <li>Pour appartenir à différents réseaux afin de la faire communiquer, un routeur possède plusieurs adresse IP aussi appelées des <strong>interfaces</strong>.</li>
+    
+  <li>Par exemple, un routeur peut avoir une interface avec l'adresse IP <code>192.168.1.1/24</code>, et une autre interface avec l'adresse IP <code>10.0.0.1/16</code></li>
+  
+  <li>Un PC ne peut pas communiquer à l'extérieur de son réseau local sans utiliser une <strong>passerelle par défaut (<i><i>gateway</i></i>)</strong>.</li>
+
+  <li>La passerelle est simplement l'<strong>adresse IP du routeur dans le réseau de la machine</strong>.<br />
+    Par exemple,  <code>192.168.1.1/24</code> pour une machine appartenant au réseau <code>192.168.1.0/24</code></li>
+</ul>
+
+
+
+<h3>🚀 Dans le prochain scénario...</h3>
+
+<p>Vous allez configurer correctement les routes et vérifier que chaque machine utilise la bonne <i>gateway</i> pour communiquer.</p>

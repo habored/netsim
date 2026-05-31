@@ -1,0 +1,198 @@
+{
+  "code": "12",
+  "title": "Firewall : filtrage",
+  "objectif": "Rétablissez l'accès au serveur Pronote depuis le réseau du lycée.",
+  "hints": [
+    "Le routage est déjà configuré.",
+    "Le problème se situe dans les règles du firewall",
+    "Les règles d'accès ACL sont déjà configurées, mais l'une d'entre elle est erronée",
+    "Trouvez la règle d'accès  du tableau à modifier de sorte que tous les PC du lycée puissent accéder au 10.0.0.0/8, et inversement",
+    "TikTouk (71.18.247.10) reste innaccessible car son adresse IP n'appartient pas au réseau 10.0.0.0/8 autorisé : c'est ce qu'on veut !",
+    "Mais vous devez ajouter les règles d'autorisation pour débloquer Pronote (46.33.191.1)",
+    "Après avoir modifié les règles, observez d'abord  la table de routage de R1 pour vérifier les routes connues",
+    "Après avoir modifié les règles, vérifiez ensuite avec ping 71.18.247.10 que TikTouk n'est pas atteignable",
+    "Après avoir modifié les règles, vérifiez enfin avec ping 46.33.191.13 que Pronote est atteignable"
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC 1",
+      "ip": "192.168.206.11",
+      "mask": "255.255.255.0",
+      "gateway": "192.168.206.1",
+      "x": 20,
+      "y": 20,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": true
+    },
+    {
+      "type": "host",
+      "name": "PC 2",
+      "ip": "192.168.206.12",
+      "mask": "255.255.255.0",
+      "gateway": "192.168.206.1",
+      "x": 20,
+      "y": 120,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+    {
+      "type": "host",
+      "name": "PC 3",
+      "ip": "192.168.206.13",
+      "mask": "255.255.255.0",
+      "gateway": "192.168.206.1",
+      "x": 20,
+      "y": 220,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+    {
+      "type": "server",
+      "name": "Serveur pédagogique",
+      "ip": "192.168.206.97",
+      "mask": "255.255.255.0",
+      "gateway": "",
+      "x": 250,
+      "y": 220,
+      "editable": false,
+      "interfacesLinkables": false
+    },
+    {
+      "type": "switch",
+      "name": "Switch LAN (lycée)",
+      "ports": 5,
+      "x": 250,
+      "y": 20,
+      "editable": false
+    },
+
+    {
+      "type": "router",
+      "name": "R1 + firewall",
+      "interfaces": [
+        { "name": "eth0", "ip": "192.168.206.1", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.10.0.1", "mask": "255.255.0.0", "editable": false }
+      ],
+      "routing": {
+        "protocoles": { "list": ["OSPF"], "editable": false },
+        "table": { "rows": [], "editable": false }
+      },
+      "firewall": {
+        "editable": true,
+        "defaultPolicy": "deny",
+        "accessRules": [
+          { "src_ip": "any", "src_mask": "any", "dst_ip": "any", "dst_mask": "any", "protocols": ["OSPF"], "action": "allow" },
+          { "src_ip": "192.168.206.0", "src_mask": "255.255.255.0", "dst_ip": "10.0.0.0", "dst_mask": "255.0.0.0", "protocols": ["ICMP"], "action": "allow" },
+          { "src_ip": "10.0.0.0", "src_mask": "255.0.0.0", "dst_ip": "192.168.206.0", "dst_mask": "255.255.255.0", "protocols": ["ICMP"], "action": "deny" },
+          { "src_ip": "10.30.0.0", "src_mask": "255.255.0.0",  "dst_ip": "192.168.206.0", "dst_mask": "255.255.255.0",  "protocols": ["ICMP", "OSPF"], "action": "deny" }
+        ]
+      },
+      "x": 350,
+      "y": 130,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+    
+    {
+      "type": "router",
+      "name": "R4",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.10.0.2", "mask": "255.255.0.0", "editable": false },
+        { "name": "eth1", "ip": "10.20.0.2", "mask": "255.255.0.0", "editable": false },
+        { "name": "eth2", "ip": "10.30.0.2", "mask": "255.255.0.0", "editable": false }
+      ],
+      "routing": {
+        "protocoles": { "list": ["OSPF"], "editable": false },
+        "table": { "rows": [], "editable": false }
+      },
+      "x": 550,
+      "y": 130,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "router",
+      "name": "R2",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.20.0.1", "mask": "255.255.0.0", "editable": false },
+        { "name": "eth1", "ip": "46.33.191.254", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing": {
+        "protocoles": { "list": ["OSPF"], "editable": false },
+        "table": { "rows": [], "editable": false }
+      },
+      "x": 650,
+      "y": 20,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+    {
+      "type": "server",
+      "name": "Pronote",
+      "ip": "46.33.191.13",
+      "mask": "255.255.255.0",
+      "gateway": "46.33.191.254",
+      "x": 850,
+      "y": 20,
+      "editable": false,
+      "interfacesLinkables": false
+    },
+
+    
+    {
+      "type": "router",
+      "name": "R3",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.30.0.1", "mask": "255.255.0.0", "editable": false },
+        { "name": "eth1", "ip": "71.18.247.254", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing": {
+        "protocoles": { "list": ["OSPF"], "editable": false },
+        "table": { "rows": [], "editable": false }
+      },
+      "x": 650,
+      "y": 220,
+      "interfacesLinkables": false,
+      "consoleAccessible": false
+    },
+    {
+      "type": "server",
+      "name": "TikTouk",
+      "ip": "71.18.247.10",
+      "mask": "255.255.255.0",
+      "gateway": "71.18.247.254",
+      "data": "Bienvenue sur TikTouk espèce de Hakeur, le réseau social préféré des adolescents !",
+      "x": 850,
+      "y": 220,
+      "editable": false,
+      "interfacesLinkables": false
+    }
+  ],
+
+  "links": [
+    { "link": ["PC 1", 0, "Switch LAN (lycée)", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["PC 2", 0, "Switch LAN (lycée)", 1], "editable": false, "type": "Ethernet" },
+    { "link": ["PC 3", 0, "Switch LAN (lycée)", 3], "editable": false, "type": "Ethernet" },
+    { "link": ["Serveur pédagogique", 0, "Switch LAN (lycée)", 4], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch LAN (lycée)", 2, "R1 + firewall", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R1 + firewall", 1, "R4", 0], "editable": false, "type": "Fibre optique" },
+    { "link": ["R4", 1, "R2", 0], "editable": false, "type": "Fibre optique" },
+    { "link": ["R4", 2, "R3", 0], "editable": false, "type": "Fibre optique" },
+    { "link": ["R2", 1, "Pronote", 0], "editable": false, "type": "Fast Ethernet" },
+    { "link": ["R3", 1, "TikTouk", 0], "editable": false, "type": "Fast Ethernet" }
+  ],
+
+  "pingsToValidate": [
+    {
+      "sourceDevice": "PC 1",
+      "targetDevice": "Pronote",
+      "flag": "FIREWALL_LYCEE_CONFIGURE"
+    }
+  ]
+}

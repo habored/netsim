@@ -1,0 +1,48 @@
+<h3>🔍 Ce que vous avez observé</h3>
+<table> 
+  <tr>
+    <th>Machine</th>
+    <th>Adresse IP</th>
+    <th>Masque</th>
+  </tr>
+
+  <tr>
+    <td>PC1</td>
+    <td>192.168.1.10</td>
+    <td>255.255.255.0</td>
+  </tr>
+
+  <tr>
+    <td>PC2</td>
+    <td>192.168.1.20</td>
+    <td>255.255.255.0</td>
+  </tr>
+
+  <tr>
+    <td>PC3</td>
+    <td>192.168.1.30</td>
+    <td>255.255.255.0</td>
+  </tr>
+</table>
+
+<h3>📖✏️ À retenir</h3>
+
+<ul>  
+  <li>Dans un réseau informatique, chaque machine possède une <strong>adresse IP</strong> et un <strong>masque de sous-réseau</strong> qui permettent de son identification.</li>
+  <li>Une <strong>adresse IP</strong> : c'est un nombre de 32 bits soit 4 octets.</li>
+  <li>Le <strong>masque de sous réseau</strong> : c'est aussi un nombre de 32 bits soit 4 octets.</li>
+  <li>La <strong>notation décimale pointée</strong> facilite la lecture de l'adresse IP et du masque : on séparer les 32 bits en 4 octets, et on note chaque octet en base 10 et séparés par des ".".</li>
+  <li>Un <strong>switch</strong> permet de relier plusieurs appareils dans <strong>un même réseau local</strong>.</li>
+  <li>Etre connecté par un switch ne suffit pas. Il faut aussi que les machines partagent <strong>le même masque et le même <i>net ID</i></strong>.</li>
+  <li>Le <strong><i>net ID</i></strong> est les bits de l'adresse IP qui correspondent aux bits de valeur 1 dans le masque binaires. Ici : les trois premiers octets du masque sont à 1 (255.255.255.0). Donc le net ID est identique pour toute les machine : <code>192.168.1</code>. <strong>Sans cela, elles ne seraient pas sur le même réseau, et ne pourraient pas communiquer</strong></li>
+  <li>La <strong>commande <code>ping</code></strong> permet de vérifier si une machine est joignable : Lorsque le ping réussit, cela signifie que les deux machines peuvent échanger des données.</li>
+  <li>La communication au sein d'un réseau local ne dépend pas de la passerelle par défaut</li>
+</ul>
+
+
+<h3>🚀 Dans le prochain scénario</h3>
+
+<p>Il y aura une mauvaise configuration réseau.</p>
+<p>
+  Vous devrez identifier le problème et corriger l’adresse IP afin de rétablir la communication.
+</p>

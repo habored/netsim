@@ -1,0 +1,91 @@
+<h3>🧪 Scénario 12 : Convergence rapide (OSPF) vs convergence lente (RIP)</h3>
+<h3>🔍 Ce que vous avez pu observer</h3>
+
+<p>
+  Dans ce scénario, vous avez observé comment deux protocoles de routage réagissent à une panne de lien :
+  <strong>OSPF</strong> (convergence rapide) et <strong>RIP</strong> (convergence lente).
+</p>
+
+<h3>🗺️ Topologie du réseau</h3>
+
+<ul>
+  <li>R1 — R2 — R3 — R4 (chemin principal)</li>
+  <li>Deux protocoles sont utilisés selon les zones :</li>
+  <ul>
+    <li><strong>Zone A (R1 → R2 → R3)</strong> : OSPF</li>
+    <li><strong>Zone B (R3 → R4)</strong> : RIP</li>
+  </ul>
+</ul>
+
+<h3>⚡ Étape 1 : Fonctionnement normal</h3>
+
+<ul>
+  <li>Les deux protocoles ont calculé un chemin optimal.</li>
+  <li><strong>OSPF</strong> utilise une carte complète du réseau (état des liens).</li>
+  <li><strong>RIP</strong> utilise le nombre de sauts (hop count).</li>
+  <li>Le trafic circule sans interruption entre R1 et R4.</li>
+</ul>
+
+<h3>💥 Étape 2 : Panne d’un lien</h3>
+
+<ul>
+  <li>Le lien entre <strong>R2 et R3</strong> tombe en panne.</li>
+</ul>
+
+<h3>🚀 Étape 3 : Réaction d’OSPF (convergence rapide)</h3>
+
+<ul>
+  <li>OSPF détecte immédiatement la panne via ses messages de voisinage.</li>
+  <li>Le routeur met à jour sa <strong>base de données topologique</strong>.</li>
+  <li>Un nouveau chemin est calculé avec l’algorithme de Dijkstra.</li>
+  <li>La reconvergence se fait en <strong>quelques secondes</strong>.</li>
+  <li>Le trafic est rapidement rerouté sans interruption majeure.</li>
+</ul>
+
+<h3>🐢 Étape 4 : Réaction de RIP (convergence lente)</h3>
+
+<ul>
+  <li>RIP attend ses mises à jour périodiques (environ 30 secondes).</li>
+  <li>Les routeurs continuent temporairement d’utiliser l’ancien chemin.</li>
+  <li>Des informations obsolètes circulent dans le réseau.</li>
+  <li>Le protocole met du temps à atteindre la stabilité (<strong>convergence lente</strong>).</li>
+  <li>Des pertes de paquets peuvent apparaître pendant la transition.</li>
+</ul>
+
+<h3>📊 Comparaison</h3>
+
+<table border="1" cellpadding="5">
+  <tr>
+    <th>Critère</th>
+    <th>OSPF</th>
+    <th>RIP</th>
+  </tr>
+  <tr>
+    <td>Type de convergence</td>
+    <td>Rapide</td>
+    <td>Lente</td>
+  </tr>
+  <tr>
+    <td>Temps de réaction</td>
+    <td>Quelques secondes</td>
+    <td>Jusqu’à plusieurs dizaines de secondes</td>
+  </tr>
+  <tr>
+    <td>Méthode</td>
+    <td>Détection immédiate + recalcul</td>
+    <td>Mises à jour périodiques</td>
+  </tr>
+  <tr>
+    <td>Impact panne</td>
+    <td>Faible</td>
+    <td>Perte de paquets possible</td>
+  </tr>
+</table>
+
+<h3>📖✏️ À retenir</h3>
+
+<ul>
+  <li><strong>OSPF</strong> réagit rapidement grâce à une vision globale du réseau.</li>
+  <li><strong>RIP</strong> est plus simple mais beaucoup plus lent à converger.</li>
+  <li>Dans un réseau réel, OSPF est préféré pour sa réactivité.</li>
+</ul>

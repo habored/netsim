@@ -1,0 +1,78 @@
+{
+  "code": "06",
+  "title": "Le chemin cassé",
+  "objectif": "Récâblez les liaisons entre les différentes machines pour rétablir la communication du PC1 avec le serveur.",
+  "hints": [
+    "Vérifiez les interfaces utilisées pour câblez correctement les machines",
+    "Rétablissez les liaisons pour permettre au PC1 d'accéder au serveur",
+    "Pinguez le serveur depuis le PC1 pour obtenir le flag",
+    "Passez en mode simulation pour suivre le chemin du paquet après le ping"
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC1",
+      "ip": "192.168.1.10",
+      "mask": "255.255.255.0",
+      "gateway": "192.168.1.1",
+      "x": 80,
+      "y": 20,
+      "editable": false,
+      "interfacesEditable": false,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-A",
+      "ports": 2,
+      "x": 350,
+      "y": 20,
+      "editable": true,
+      "interfacesLinkables": true,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "router",
+      "name": "Routeur",
+      "interfaces": [
+        {
+          "name": "eth0",
+          "ip": "192.168.1.1",
+          "mask": "255.255.255.0",
+          "editable": false
+        },
+        {
+          "name": "eth1",
+          "ip": "10.0.0.1",
+          "mask": "255.255.255.0",
+          "editable": false
+        }
+      ],
+      "x": 80,
+      "y": 150,
+      "interfacesLinkables": true
+    },
+
+    {
+      "type": "server",
+      "name": "Serveur",
+      "ip": "10.0.0.2",
+      "mask": "255.255.255.0",
+      "gateway": "10.0.0.1",
+      "x": 350,
+      "y": 150,
+      "editable": false,
+      "interfacesLinkables": true,
+      "consoleAccessible": false
+    }
+  ],
+
+  "links": [
+  ],
+  "pingsToValidate": [
+    { "sourceDevice": "PC1", "targetDevice": "Serveur", "flag": "DIAGNOSTIC" }
+  ]
+}

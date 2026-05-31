@@ -1,0 +1,123 @@
+{
+  "code": "12",
+  "title": "Convergence des protocoles RIP et OSPF après une panne réseau",
+  "objectif": "Connectez deux réseaux et observez la différence de convergence entre RIP et OSPF. Analysez le temps de réaction des protocoles et l’impact sur la transmission des paquets.",
+  "hints": [
+    "Le réseau est divisé en deux zones : une zone RIP et une zone OSPF.",
+    "Attendez que les tables de routage se stabilisent avant de provoquer la panne.",
+    "Ajoutez le lien R1<->R2 et observez la mise à jour de la table de R1 pendant 2-3 minutes.",
+    "Ajoutez le lien R3<->R2 et observez la mise à jour de la table de R3 pendant 2-3 minutes.",
+    "Qui de R1 et R3 réagira le plus vite ? Pourquoi ?"
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC Client",
+      "ip": "192.168.10.10",
+      "mask": "255.255.255.0",
+      "gateway": "192.168.10.1",
+      "x": 20,
+      "y": 120,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch LAN 1",
+      "ports": 2,
+      "x": 150,
+      "y": 20,
+      "editable": false
+    },
+
+    {
+      "type": "router",
+      "name": "R1 (RIP)",
+      "interfaces": [
+        { "name": "eth0", "ip": "192.168.10.1", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.0.0.1", "mask": "255.255.255.0", "editable": true }
+      ],
+      "routing": {
+        "protocoles": { "list": ["RIP"], "editable": false },
+        "table": { "rows": [], "editable": false }
+      },
+      "x": 350,
+      "y": 20,
+      "interfacesLinkables": true,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "router",
+      "name": "R2 (Frontière RIP/OSPF)",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.0.0.2", "mask": "255.255.255.0", "editable": true },
+        { "name": "eth1", "ip": "10.0.1.1", "mask": "255.255.255.0", "editable": true }
+      ],
+      "routing": {
+        "protocoles": { "list": ["RIP", "OSPF"], "editable": false },
+        "table": { "rows": [], "editable": false }
+      },
+      "x": 500,
+      "y": 200,
+      "interfacesLinkables": true,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "router",
+      "name": "R3 (OSPF)",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.0.1.2", "mask": "255.255.255.0", "editable": true },
+        { "name": "eth1", "ip": "10.60.2.1", "mask": "255.255.255.0", "editable": true }
+      ],
+      "routing": {
+        "protocoles": { "list": ["OSPF"], "editable": false },
+        "table": { "rows": [], "editable": false }
+      },
+      "x": 650,
+      "y": 20,
+      "interfacesLinkables": true,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch LAN 2",
+      "ports": 2,
+      "x": 850,
+      "y": 20,
+      "editable": false
+    },
+
+    {
+      "type": "server",
+      "name": "Serveur",
+      "ip": "10.60.2.10",
+      "mask": "255.255.255.0",
+      "gateway": "10.60.2.1",
+      "x": 1000,
+      "y": 120,
+      "editable": false,
+      "interfacesLinkables": false
+    }
+  ],
+
+  "links": [
+    { "link": ["PC Client", 0, "Switch LAN 1", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch LAN 1", 1, "R1 (RIP)", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R3 (OSPF)", 1, "Switch LAN 2", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch LAN 2", 1, "Serveur", 0], "editable": false, "type": "Ethernet" }
+  ],
+
+  "pingsToValidate": [
+    {
+      "sourceDevice": "PC Client",
+      "targetDevice": "Serveur",
+      "flag": "CONVERGENCE_RIP_OSPF"
+    }
+  ]
+}

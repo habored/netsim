@@ -1,0 +1,52 @@
+{
+  "code": "03",
+  "title": "Réseau local de A à Z",
+  "objectif": "Configurez correctement le switch, le PC de Bob et le PC d'Alice afin qu'ils puissent communiquer dans le même réseau local.",
+  "hints": [
+    "Configurez les interfaces du switch et des PC en cliquant dessus",
+    "Vous pouvez cliquer sur les interfaces des appareils pour les câbler ensemble ou les déconnecter",
+    "Les deux PC doivent appartenir au même réseau",
+    "Pinguez le PC d'Alice depuis le PC de Bob pour obtenir le flag"
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC de Bob",
+      "ip": "",
+      "mask": "",
+      "gateway": "",
+      "x": 20,
+      "y": 100,
+      "editable": true,
+      "interfacesLinkables": true,
+      "consoleAccessible": true
+    },
+    {
+      "type": "host",
+      "name": "PC d'Alice",
+      "ip": "172.16.0.45",
+      "mask": "255.255.0.0",
+      "gateway": "",
+      "x": 500,
+      "y": 100,
+      "editable": false,
+      "interfacesLinkables": true,
+      "consoleAccessible": false
+    },
+    {
+      "type": "switch",
+      "name": "Switch-A",
+      "ports": 1,
+      "x": 250,
+      "y": 100,
+      "editable": true,
+      "interfacesLinkables": true,
+      "consoleAccessible": false
+    }
+  ],
+  "links": [],
+  "pingsToValidate": [
+    { "sourceDevice": "PC de Bob", "targetDevice": "PC d'Alice", "flag": "BRAVO" }
+  ]
+}

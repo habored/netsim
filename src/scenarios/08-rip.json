@@ -1,0 +1,141 @@
+{
+  "code": "08",
+  "title": "Le protocole RIP 🪦", 
+  "objectif": "Pinguez le serveur depuis le PC d'Alice et observez le circuit suivi.",
+  "hints": [
+    "Pinguez une première fois pour remplir les tables de ARP et de routage et pinguez une deuxième fois pour observez le chemin suivi depuis le mode simulation avec les informations essentielles",
+    "Câblez le routeur R1 et R4 : il y a maintenant deux chemins possibles pour atteindre le serveur",
+    "Après le câblage du routeur R4, attendez ensuite la stabilisation des tables de routages vers 172.16.0.0 (comptez environ 30 secondes)",
+    "Pinguez de nouveau le serveur depuis le PC d'Alice et observez le chemin suivi et les tables de routage.",
+    "❓ Pouvez-vous expliquer le choix du chemin pris ❓"
+  ],
+
+  "devices": [
+    {
+      "type": "host",
+      "name": "PC d'Alice",
+      "ip": "192.168.1.10",
+      "mask": "255.255.255.0",
+      "gateway": "192.168.1.1",
+      "x": 20,
+      "y": 120,
+      "editable": false,
+      "interfacesLinkables": false,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-LAN-A",
+      "ports": 2,
+      "x": 200,
+      "y": 20,
+      "editable": false
+    },
+
+    { 
+      "type": "router",
+      "name": "R1 (RIP)",
+      "interfaces": [
+        { "name": "eth0", "ip": "192.168.1.1", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.0.1.1", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth2", "ip": "10.0.4.2", "mask": "255.255.255.0", "editable": true }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["RIP"] , "editable": false},
+        "table": { "rows": [],  "editable": false }
+      },
+      "x": 450,
+      "y": 60,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "router",
+      "name": "R2 (RIP)",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.0.1.2", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.0.2.1", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["RIP"] , "editable": false},
+        "table": { "rows": [],  "editable": false }
+      },
+      "x": 450,
+      "y": 220,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "router",
+      "name": "R3 (RIP)",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.0.2.2", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth1", "ip": "10.0.3.1", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["RIP"] , "editable": false},
+        "table": { "rows": [],  "editable": false }
+      },
+      "x": 750,
+      "y": 200,
+      "consoleAccessible": true
+    },
+
+    {
+      "type": "router",
+      "name": "R4 (RIP shortcut)",
+      "interfaces": [
+        { "name": "eth0", "ip": "10.0.4.1", "mask": "255.255.255.0", "editable": true },
+        { "name": "eth1", "ip": "10.0.3.2", "mask": "255.255.255.0", "editable": false },
+        { "name": "eth2", "ip": "172.16.0.253", "mask": "255.255.255.0", "editable": false }
+      ],
+      "routing" : {
+        "protocoles" : { "list": ["RIP"] , "editable": false},
+        "table": { "rows": [],  "editable": false }
+      },
+      "x": 680,
+      "y": 20,
+      "consoleAccessible": false
+    },
+
+    {
+      "type": "switch",
+      "name": "Switch-LAN-B",
+      "ports": 3,
+      "x": 900,
+      "y": 20,
+      "editable": false
+    },
+
+    {
+      "type": "server",
+      "name": "Serveur",
+      "ip": "172.16.0.10",
+      "mask": "255.255.255.0",
+      "gateway": "172.16.0.253",
+      "x": 1050,
+      "y": 120,
+      "editable": false,
+      "interfacesLinkables":false
+    }
+  ],
+
+  "links": [
+    { "link": ["PC d'Alice", 0, "Switch-LAN-A", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch-LAN-A", 1, "R1 (RIP)", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R1 (RIP)", 1, "R2 (RIP)", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R2 (RIP)", 1, "R3 (RIP)", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R3 (RIP)", 1, "R4 (RIP shortcut)", 1], "editable": false, "type": "Ethernet" },
+    { "link": ["Switch-LAN-B", 2, "Serveur", 0], "editable": false, "type": "Ethernet" },
+    { "link": ["R4 (RIP shortcut)", 2, "Switch-LAN-B", 0], "editable": false, "type": "Ethernet" }
+  ],
+
+  "pingsToValidate": [
+    {
+      "sourceDevice": "PC d'Alice",
+      "targetDevice": "Serveur",
+      "flag": "PLUS_COURT"
+    }
+  ]
+}

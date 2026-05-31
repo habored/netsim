@@ -1,0 +1,24 @@
+<h3>🔍 Ce que vous avez observé</h3>
+<ul>
+    <li>Le réseau <strong>R1 (RIP) — R2 (OSPF) — R3 (RIP)</strong> peut fonctionner, mais pas directement.</li>
+    <li><strong>RIP</strong> et <strong>OSPF</strong> sont des protocoles de routage différents et incompatibles entre eux.</li>
+    <li>Sans configuration particulière, les routeurs ne peuvent pas échanger leurs routes.</li>
+</ul>
+
+<h3>📖✏️ À retenir</h3>
+<ul>
+    <li>Pour assurer la communication, le routeur <strong>R2</strong> doit jouer un rôle de passerelle en réalisant une <strong>redistribution des routes</strong> entre RIP et OSPF.</li>
+    <li>Avec cette configuration, les réseaux <strong>R1</strong> et <strong>R3</strong> peuvent communiquer via <strong>R2</strong>.</li>
+</ul>
+
+<h3>⚠️ Limites actuelles de la simulation</h3>
+
+<ul><li>
+    Les échanges entre routeurs sont souvent <strong>schématisés</strong> (pas de vraies trames, ni de paquets détaillés).</li>
+
+  <li>
+    La taille du réseau est <strong>limitée</strong>, alors qu’en réalité les réseaux peuvent contenir des dizaines ou centaines de routeurs.</li>
+
+  <li>
+    L’aspect <strong>sécurité réseau</strong> (authentification OSPF, attaques, filtrage) est généralement absent.</li>
+</ul>

@@ -1,0 +1,38 @@
+<h3>🧩 Ce que vous avez découvert</h3>
+
+<p>Dans ce scénario, certaines machines semblaient correctement connectées au switch…mais la communication échouait malgré tout ❌</p>
+<p>Vous avez dû analyser les adresses IP et les masques afin d’identifier les erreurs de configuration réseau.</p>
+
+<table>
+  <tr>  <th>Machine</th>  <th>Adresse IP initiale</th>  <th>Masque initial</th>  <th>Problème</th></tr>
+  <tr>  <td>PC de Bob</td>  <td><code>192.168.1.0</code></td>  <td><code>255.255.255.0</code></td>  <td>Adresse réseau ❌</td></tr>
+  <tr>  <td>PC d'Alice</td>  <td><code>192.168.1.1</code></td>  <td><code>255.255.255.0</code></td>  <td>Aucun problème ✔️</td></tr>
+  <tr>  <td>PC prof</td>  <td><code>192.168.2.255</code></td>  <td><code>255.255.0.0</code></td>  <td>Mauvais réseau + masque incorrect ❌</td></tr>
+  <tr>  <td>PC 192</td>  <td><code>255.255.1.192</code></td>  <td><code>255.255.1.0</code></td>  <td>Mauvais réseau + masque incorrect ❌</td></tr>
+</table>
+
+<h3>📖✏️ À retenir</h3>
+
+<ul>
+  <li>Toutes adresses IP des machines doivent partager le même <strong>net ID</strong> pour être sur le  même réseau local.</li>
+  <li>Avec le masque <code>255.255.255.0</code>,  les trois premiers octets représentent le réseau.</li>
+  <li>Dans le réseau <code>192.168.1.0/24</code>,  les adresses utilisables vont de <code>192.168.1.1</code> à <code>192.168.1.254</code>.</li>
+  <li>L’adresse <code>192.168.1.0</code> est réservée pour identifier le réseau :  c’est l’ <strong>adresse réseau</strong>.</li>
+  <li>L’adresse <code>192.168.1.255</code> est réservée pour envoyer un message à toutes les machines du réseau :  c’est l’ <strong>adresse de broadcast</strong>.</li>
+  <li>Une machine ne peut pas communiquer correctement si son <strong>adresse IP</strong>  ou son <strong>masque</strong>  sont invalides.</li>
+  <li>Un masque incorrect peut faire croire à une machine qu’elle appartient à un autre réseau.</li>
+  <li>La <strong>commande <code>ping</code></strong> est exécutée depuis un PC source et requiert de préciser l'adresse IP du PC dont on cherche s'il est atteignable depuis le PC source.</li>
+</ul>
+
+<h3>🏁 Ce que vous avez accompli</h3>
+
+<p>✔️ Vous avez identifié plusieurs erreurs réseau.</p>
+<p>✔️ Vous avez corrigé des adresses IP invalides.</p>
+<p>✔️ Vous avez vérifié la connectivité avec des tests de ping.</p>
+<p>✔️ Vous avez récupéré plusieurs fragments de flag en restaurant les communications.</p>
+
+<h3>🚀 Dans le prochain scénario</h3>
+
+<p>Les machines auront cette fois une configuration IP correcte…</p>
+<p>Mais certaines communications échoueront à cause d’un problème plus subtil lié au <strong>masque de sous-réseau</strong>.</p>
+<p>Vous devrez comprendre comment le masque influence le découpage des réseaux 🔍</p>
