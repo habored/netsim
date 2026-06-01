@@ -11,6 +11,14 @@ const scenarioModules = import.meta.glob("./src/scenarios/*.json", {
   eager: true
 });
 
+/**
+ * Chargement des contenus HTML des bilans via Vite (?raw pour obtenir le texte)
+ */
+const bilanModules = import.meta.glob("./src/scenarios/*-bilan.html", {
+  query: "?raw",
+  eager: true
+});
+
 export function loadScenarios() {
   const scenarios = Object.entries(scenarioModules).map(([path, mod]) => {
     const data = mod.default;
@@ -263,10 +271,10 @@ async function showBilan(index) {
   bilanTitle.textContent = `Bilan : ${scenarioData.title}`;
 
   try {
-    const response = await fetch(`./src/scenarios/${scenarioData.code}-bilan.html`);
-    if (!response.ok) throw new Error("Fichier bilan introuvable");
-    const html = await response.text();
-    bilanContent.innerHTML = html;
+    const bilanKey = `./src/scenarios/${scenarioData.code}-bilan.html`;
+    const htmlContent = bilanModules[bilanKey]?.default;
+    if (!htmlContent) throw new Error("Fichier bilan introuvable dans le bundle");
+    bilanContent.innerHTML = htmlContent;
   } catch (err) {
     console.warn(`Erreur lors du chargement du bilan pour ${scenarioData.code}:`, err);
     bilanContent.innerHTML = `
