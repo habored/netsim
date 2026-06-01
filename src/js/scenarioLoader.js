@@ -1,4 +1,4 @@
- import { Network, Scenario } from "./network-core.js";
+import { Network, Scenario } from "./network-core.js";
 import { Device, Host, Router, Switch, DataServer } from "./devices.js";
 
 export function createScenarioFromJSON(data) {
@@ -12,17 +12,17 @@ export function createScenarioFromJSON(data) {
       case "host":
         device = new Host(d.name, d.ip, d.mask, d.gateway,
           d.editable ?? false,
-          d.interfacesLinkables ?? false, // Default to false
+          d.interfacesLinkables ?? d.editable ?? false,
           d.consoleAccessible ?? true, // Default to true for hosts
         );
         break;
 
       case "switch":
-        device = new Switch(null, d.name, d.ports ?? 4, d.editable ?? false, d.interfacesLinkables ?? false, d.consoleAccessible ?? false);
+        device = new Switch(null, d.name, d.ports ?? 4, d.editable ?? false, d.interfacesLinkables ?? d.editable ?? false, d.consoleAccessible ?? false);
         break;
 
       case "router":
-        device = new Router(null, d.name, d.interfaces, d.editable ?? false, d.interfacesLinkables ?? false, d.consoleAccessible ?? false);
+        device = new Router(null, d.name, d.interfaces, d.editable ?? false, d.interfacesLinkables ?? d.editable ?? false, d.consoleAccessible ?? false);
         if (d.routing || d.firewall) {
           device.applyRoutingConfig(d); // On passe l'objet complet d pour capter routing et firewall
         }
