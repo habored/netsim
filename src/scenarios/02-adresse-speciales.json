@@ -21,7 +21,8 @@
       "gateway": "",
       "x": 50,
       "y": 20,
-      "editable": true
+      "editable": true,
+      "consoleAccessible": true
     },
     {
       "type": "host",
@@ -31,7 +32,8 @@
       "gateway": "",
       "x": 300,
       "y": 20,
-      "editable": true
+      "editable": true,
+      "consoleAccessible": true
     },
 
     {

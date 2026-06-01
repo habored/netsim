@@ -137,7 +137,7 @@ export class Network {
     return null;
   }
 
-  addLink(intA, intB, editable = null) {
+  addLink(intA, intB, editable = false) {
     if (!intA || !intB || intA.parentDevice === intB.parentDevice) {
       return null;
     }

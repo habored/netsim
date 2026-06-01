@@ -6,17 +6,19 @@ import { RouteRedistributor } from "./RouteRedistributor.js";
 import { RIPManager } from "./RIPManager.js";
 
 export class Device {
-  constructor(id, type, name, editable = false, consoleAccessible = false) {
+  constructor(id, type, name, editable = false, consoleAccessible = false, interfacesLinkables = false) {
     this.id = id;
     this.type = type;
     this.interfaces = [];
     this.name = name;
     this.editable = Boolean(editable);
     this.consoleAccessible = Boolean(consoleAccessible);
+    this.interfacesLinkables = Boolean(interfacesLinkables);
   }
 
-  addInterface(name, ip = null, mask = null, speed = 1, editable = true, linkable = false) {
+  addInterface(name, ip = null, mask = null, speed = 1, editable = true, linkable = true) {
     const ifaceName = name ?? `eth${this.interfaces.length}`;
+    const isLinkable = linkable; 
     const nic = new Interface(
       this,
       ip,
@@ -24,7 +26,7 @@ export class Device {
       ifaceName,
       speed,
       Boolean(editable),
-      Boolean(linkable)
+      Boolean(isLinkable)
     );
 
     this.interfaces.push(nic);
@@ -69,7 +71,7 @@ export class Host extends Device {
     id = null,
     type = "pc"
   ) {
-    super(id, type, name, editable, consoleAccessible);
+    super(id, type, name, editable, consoleAccessible, interfaceLinkable);
 
     const nic = this.addInterface("eth0", ip, mask, 1, editable, interfaceLinkable);
 
@@ -173,7 +175,7 @@ export class Switch extends Device {
     interfaceLinkable = false,
     consoleAccessible = false
   ) {
-    super(id, "switch", name, editable, consoleAccessible);
+    super(id, "switch", name, editable, consoleAccessible, interfaceLinkable);
 
     for (let index = 0; index < nbPorts; index += 1) {
       this.addInterface(`p${index}`, null, null, 1, editable, interfaceLinkable);
@@ -212,10 +214,10 @@ export class Router extends Device {
     name,
     portSpec = 2,
     editable = false,
-    interfaceLinkable = false, // Par défaut, rien n'est linkable
+    interfaceLinkable = false, 
     consoleAccessible = false
   ) {
-    super(id, "router", name, editable, consoleAccessible);
+    super(id, "router", name, editable, consoleAccessible, interfaceLinkable);
 
     const interfaceConfigs = Array.isArray(portSpec)
       ? portSpec
@@ -228,7 +230,7 @@ export class Router extends Device {
         config.mask ?? null,
         config.speed ?? 1,
         config.editable ?? editable, // Paramètres IP (editable)
-        config.linkable ?? config.editable ?? interfaceLinkable // La config locale surcharge le global
+        config.linkable ?? interfaceLinkable ?? true 
       );
     });
 

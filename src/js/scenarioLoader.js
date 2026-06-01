@@ -12,24 +12,34 @@ export function createScenarioFromJSON(data) {
       case "host":
         device = new Host(d.name, d.ip, d.mask, d.gateway,
           d.editable ?? false,
-          d.interfacesLinkables ?? d.editable ?? false,
-          d.consoleAccessible ?? true, // Default to true for hosts
+          d.interfacesLinkables ?? false,
+          d.consoleAccessible ?? false, 
         );
         break;
 
       case "switch":
-        device = new Switch(null, d.name, d.ports ?? 4, d.editable ?? false, d.interfacesLinkables ?? d.editable ?? false, d.consoleAccessible ?? false);
+        device = new Switch(null, d.name, d.ports ?? 4, 
+          d.editable ?? false, 
+          d.interfacesLinkables ?? false, 
+          d.consoleAccessible ?? false);
         break;
 
       case "router":
-        device = new Router(null, d.name, d.interfaces, d.editable ?? false, d.interfacesLinkables ?? d.editable ?? false, d.consoleAccessible ?? false);
+        device = new Router(null, d.name, 
+          d.interfaces, 
+          d.editable ?? false, 
+          d.interfacesLinkables ?? false, 
+          d.consoleAccessible ?? false);
         if (d.routing || d.firewall) {
           device.applyRoutingConfig(d); // On passe l'objet complet d pour capter routing et firewall
         }
         break;
 
       case "server":
-        device = new DataServer(d.name, d.ip, d.mask, d.gateway, d.editable ?? false, d.interfacesLinkables ?? true, d.consoleAccessible ?? true);
+        device = new DataServer(d.name, d.ip, d.mask, d.gateway, 
+          d.editable ?? false, 
+          d.interfacesLinkables ?? false, 
+          d.consoleAccessible ?? false);
         break;
     }
 
@@ -42,10 +52,10 @@ export function createScenarioFromJSON(data) {
 
   for (const entry of data.links) {
     const [aName, aPort, bName, bPort] = entry.link;
-    network.addLink(
+      network.addLink(
       devicesMap.get(aName).interfaces[aPort], 
       devicesMap.get(bName).interfaces[bPort],
-      entry
+      entry.editable ?? false
     );
   }
 

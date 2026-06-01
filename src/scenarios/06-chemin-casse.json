@@ -19,6 +19,7 @@
       "x": 80,
       "y": 20,
       "editable": false,
+      "interfacesLinkables": true,
       "interfacesEditable": false,
       "consoleAccessible": true
     },
@@ -31,6 +32,7 @@
       "y": 20,
       "editable": true,
       "interfacesLinkables": true,
+      "interfacesEditable": false,
       "consoleAccessible": false
     },
 
@@ -53,7 +55,9 @@
       ],
       "x": 80,
       "y": 150,
-      "interfacesLinkables": true
+      "interfacesLinkables": true,
+      "interfacesEditable": false,
+      "consoleAccessible": false
     },
 
     {
@@ -66,7 +70,7 @@
       "y": 150,
       "editable": false,
       "interfacesLinkables": true,
-      "consoleAccessible": false
+      "interfacesEditable": false
     }
   ],
 
