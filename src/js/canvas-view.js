@@ -180,7 +180,7 @@ export class CanvasNetworkView {
         : isSelected
           ? "rgba(204, 0, 0, 0.5)"
           : "rgba(37, 99, 235, 0.3)";
-      ctx.lineWidth = isFocused ? 4 : 2;
+      ctx.lineWidth = isFocused ? 6 : 2;
       ctx.beginPath();
       ctx.moveTo(pointA.x, pointA.y);
       ctx.lineTo(pointB.x, pointB.y);
@@ -200,7 +200,7 @@ export class CanvasNetworkView {
 
       ctx.fillStyle = DEVICE_FILL[deviceView.model.type] ?? "#e5e7eb";
       ctx.strokeStyle = isFocusedDevice ? "#f97316" : (isSelectedDevice && deviceView.model.editable) ? "#01a169" : "rgba(15, 23, 42, 0.2)";
-      ctx.lineWidth = isFocusedDevice || isSelectedDevice ? 2 : 1;
+      ctx.lineWidth = isFocusedDevice || isSelectedDevice ? 4 : 1;
       ctx.fillRect(deviceView.x, deviceView.y, deviceView.width, deviceView.height);
       ctx.strokeRect(deviceView.x, deviceView.y, deviceView.width, deviceView.height);
 
