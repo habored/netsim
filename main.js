@@ -192,6 +192,13 @@ async function loadChallenge(index) {
 
   try {
     const scenarioData = AVAILABLE_SCENARIOS[index];
+
+    // Injection du numéro de scénario dans le titre principal de la page
+    const mainTitle = document.querySelector("h1");
+    if (mainTitle) {
+      mainTitle.textContent = `Network Simulation Interactive #${scenarioData.code}`;
+    }
+
     const scenario = createScenarioFromJSON(scenarioData);
     currentScenarioInstance = scenario; // Store the loaded scenario
 
