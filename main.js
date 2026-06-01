@@ -38,7 +38,7 @@ const AVAILABLE_SCENARIOS = loadScenarios();
 
 // --- Challenge Manager State and Logic ---
 const CHALLENGE_PROGRESS_KEY = "netsim_challenge_progress";
-let challengeProgress = []; // Array of { status: 'locked'|'unlocked'|'completed', enteredFlag: string, bilanViewed: boolean, realSuccess: boolean }
+let challengeStore = {}; // Object keyed by scenario code: { status, enteredFlag, bilanViewed, foundFlags, realSuccess }
 let lastOpenedBilanIndex = -1;
 let currentScenarioIndex = -1; // Index of the currently loaded scenario
 let currentScenarioInstance = null; // Store the loaded scenario object
@@ -91,8 +91,9 @@ const bilanBlur = document.getElementById("bilanBlur");
 const bilanModal = setupModalPanel(bilanBlur, null, true);
 // Déclenche le déblocage et le chargement du prochain défi après lecture du bilan
 bilanRetainBtn.addEventListener("click", () => {
-  if (lastOpenedBilanIndex !== -1) {
-    checkAndUnlockNextChallenge(lastOpenedBilanIndex);
+  const scenario = AVAILABLE_SCENARIOS[lastOpenedBilanIndex];
+  if (scenario) {
+    checkAndUnlockNextChallenge(scenario.code);
   }
 });
 // UI elements for help menu
@@ -101,31 +102,32 @@ const helpBlur = document.getElementById("helpBlur");
 setupModalPanel(helpBlur, helpBtn, true);
 
 function saveProgress() {
-  localStorage.setItem(CHALLENGE_PROGRESS_KEY, JSON.stringify(challengeProgress));
+  localStorage.setItem(CHALLENGE_PROGRESS_KEY, JSON.stringify(challengeStore));
+}
+
+/**
+ * Récupère ou initialise le progrès pour un scénario donné via son code unique
+ */
+function getProgress(code) {
+  if (!challengeStore[code]) {
+    challengeStore[code] = {
+      status: code === AVAILABLE_SCENARIOS[0].code ? "unlocked" : "locked",
+      enteredFlag: "",
+      bilanViewed: false,
+      foundFlags: [],
+      realSuccess: false,
+    };
+  }
+  return challengeStore[code];
 }
 
 function loadProgress() {
-  const savedProgress = localStorage.getItem(CHALLENGE_PROGRESS_KEY);
-  if (savedProgress) {
-    challengeProgress = JSON.parse(savedProgress);
-    // S'assure que le tableau de progression correspond à la liste actuelle des fichiers
-    while (challengeProgress.length < AVAILABLE_SCENARIOS.length) {
-      challengeProgress.push({
-        status: "locked",
-        enteredFlag: "",
-        bilanViewed: false,
-        realSuccess: false,
-      });
-    }
-  } else {
-    // Initialize progress: first scenario unlocked, others locked
-    challengeProgress = AVAILABLE_SCENARIOS.map((_, index) => ({
-      status: index === 0 ? "unlocked" : "locked",
-      enteredFlag: "",
-      bilanViewed: false,
-      realSuccess: false, // This will be set by the simulation engine
-    }));
+  const saved = localStorage.getItem(CHALLENGE_PROGRESS_KEY);
+  if (saved) {
+    challengeStore = JSON.parse(saved);
   }
+  // On s'assure que tous les scénarios connus existent dans le store
+  AVAILABLE_SCENARIOS.forEach(s => getProgress(s.code));
   saveProgress();
 }
 
@@ -135,8 +137,7 @@ async function renderChallengePath() {
 
   for (let i = 0; i < AVAILABLE_SCENARIOS.length; i++) {
     const scenarioMeta = AVAILABLE_SCENARIOS[i];
-
-    const progress = challengeProgress[i];
+    const progress = getProgress(scenarioMeta.code);
     const challengeCard = document.createElement("div");
     challengeCard.className = `challenge-card ${progress.status}`;
     if (i === currentScenarioIndex) {
@@ -207,6 +208,13 @@ async function loadChallenge(index) {
 
     const engine = new SimulationEngine(scenario.network, scenario, globalEventBus);
     currentEngineInstance = engine; // Store the engine instance
+    
+    // Restaure les flags déjà trouvés depuis le store (SSOT)
+    const progress = getProgress(scenarioData.code);
+    if (progress.foundFlags && Array.isArray(progress.foundFlags)) {
+      progress.foundFlags.forEach(f => engine.recordPingValidated(f));
+    }
+
     engine.start(); // Démarre l'horloge pour la convergence RIP/OSPF
     currentCanvasView = new CanvasNetworkView(canvas, scenario.network);
 
@@ -238,15 +246,16 @@ async function loadChallenge(index) {
 
 async function validateFlag(index, enteredFlag) {
   const scenarioData = AVAILABLE_SCENARIOS[index];
+  const progress = getProgress(scenarioData.code);
 
   if (enteredFlag === scenarioData.finalFlag) {
-    challengeProgress[index].enteredFlag = enteredFlag;
+    progress.enteredFlag = enteredFlag;
     saveProgress();
-    
-    if (challengeProgress[index].realSuccess) {
-      alert("Flag correct ! Vous pouvez maintenant voir le bilan.");
+
+    if (progress.realSuccess) {
+      alert("Flag correct et réussite technique confirmée ! Vous pouvez maintenant voir le bilan.");
     } else {
-      alert("Flag correct ! Cependant, vous devez réussir l'objectif de connectivité dans le simulateur (ping) pour valider ce défi.");
+      alert("Flag correct ! Cependant, vous devez réussir l'objectif de connectivité dans le simulateur (ping) pour valider techniquement ce défi.");
     }
     renderChallengePath(); // Re-render to show "Voir le bilan" button
   } else {
@@ -255,13 +264,14 @@ async function validateFlag(index, enteredFlag) {
 }
 
 async function showBilan(index) {
-  const progress = challengeProgress[index];
+  const scenarioData = AVAILABLE_SCENARIOS[index];
+  const progress = getProgress(scenarioData.code);
+
   if (!progress.enteredFlag || !progress.realSuccess) {
     alert("Veuillez d'abord entrer le flag et réussir le défi technique pour accéder au bilan.");
     return;
   }
 
-  const scenarioData = AVAILABLE_SCENARIOS[index];
   lastOpenedBilanIndex = index;
 
   // Mark bilan as viewed
@@ -287,24 +297,27 @@ async function showBilan(index) {
   bilanModal.open();
 }
 
-function checkAndUnlockNextChallenge(completedChallengeIndex) {
-  const progress = challengeProgress[completedChallengeIndex];
+function checkAndUnlockNextChallenge(currentCode) {
+  const progress = getProgress(currentCode);
 
   // Condition 1: The flag was genuinely achieved (realSuccess)
   // Condition 2: The bilan has been opened
   if (progress.realSuccess && progress.bilanViewed) {
-    const nextIndex = completedChallengeIndex + 1;
+    const currentIndex = AVAILABLE_SCENARIOS.findIndex(s => s.code === currentCode);
+    const nextIndex = currentIndex + 1;
+    
     if (nextIndex < AVAILABLE_SCENARIOS.length) {
-      const nextChallengeProgress = challengeProgress[nextIndex];
+      const nextScenario = AVAILABLE_SCENARIOS[nextIndex];
+      const nextProgress = getProgress(nextScenario.code);
 
       // Débloque le suivant si nécessaire
-      if (nextChallengeProgress.status === "locked") {
-        nextChallengeProgress.status = "unlocked";
+      if (nextProgress.status === "locked") {
+        nextProgress.status = "unlocked";
         saveProgress();
       }
 
       bilanModal.close();
-      alert(`Félicitations ! Chargement du défi suivant : ${AVAILABLE_SCENARIOS[nextIndex].title}`);
+      alert(`Félicitations ! Chargement du défi suivant : ${nextScenario.title}`);
       loadChallenge(nextIndex);
     } else {
       alert("Félicitations ! Vous avez terminé tous les défis !");
@@ -315,14 +328,23 @@ function checkAndUnlockNextChallenge(completedChallengeIndex) {
 
 // Listen for custom event from panel-controller when a ping flag is found
 globalEventBus.subscribe('pingFlagFound', (detail) => {
-  const { allPingsValidated } = detail;
-  if (currentScenarioIndex !== -1 && allPingsValidated) {
-    challengeProgress[currentScenarioIndex].realSuccess = true;
+  const { flag, allPingsValidated } = detail;
+  if (currentScenarioInstance) {
+    const progress = getProgress(currentScenarioInstance.code);
+
+    if (flag && !progress.foundFlags.includes(flag)) {
+      progress.foundFlags.push(flag);
+    }
+
+    if (allPingsValidated) {
+      progress.realSuccess = true;
+    }
+    
     saveProgress();
     renderChallengePath(); // Rafraîchit pour afficher "Voir le bilan" si le flag est déjà là
 
-    if (challengeProgress[currentScenarioIndex].bilanViewed) {
-      checkAndUnlockNextChallenge(currentScenarioIndex);
+    if (progress.bilanViewed) {
+      checkAndUnlockNextChallenge(currentScenarioInstance.code);
     }
   }
 });
@@ -367,9 +389,10 @@ const initializeNesiin = async () => {
     await renderChallengePath();
 
     // Au démarrage, on charge le dernier défi débloqué
+    const scenarios = AVAILABLE_SCENARIOS;
     let indexToLoad = 0;
-    for (let i = challengeProgress.length - 1; i >= 0; i--) {
-      if (challengeProgress[i].status !== "locked") {
+    for (let i = scenarios.length - 1; i >= 0; i--) {
+      if (getProgress(scenarios[i].code).status !== "locked") {
         indexToLoad = i;
         break;
       }
